@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2025-11-07
+
+### Fixed
+- Tree-sitter injection queries now support code-cell directives with YAML configuration blocks
+- Code cells with `:tags:`, `:linenos:`, or other MyST options now correctly receive syntax highlighting
+- Changed from exact string matching (`#eq?`) to regex matching (`#match?`) to handle config blocks
+
+### Added
+- Test suite for code-cell directives with configuration (21 new tests)
+- Test fixture `test/fixtures/code_cell_with_config.md` demonstrating various config formats
+- `VISUAL_TEST.md` for manual verification of the fix
+
 ## [0.2.0] - 2025-11-07
 
 ### Major Refactoring Release
@@ -88,6 +100,7 @@ This release represents a complete overhaul of the plugin architecture, testing 
 - MystRefresh activation enhancement (Issue #54)
 - Various highlighting and injection query fixes
 
-[Unreleased]: https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/releases/tag/v0.1.0
