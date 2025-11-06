@@ -14,7 +14,7 @@ x = [1, 2, 3]
 
 ```{code-cell} python
 ---
-:tags: [hide-input]
+tags: [hide-input]
 ---
 print("This uses proper YAML block config")
 x = [1, 2, 3]
@@ -33,8 +33,8 @@ data = np.random.rand(100)
 
 ```{code-cell} ipython
 ---
-:tags: [hide-output, remove-input]
-:linenos:
+tags: [hide-output, remove-input]
+linenos: true
 ---
 import numpy as np
 data = np.random.rand(100)
@@ -50,8 +50,8 @@ data = np.random.rand(100)
 
 ```{math}
 ---
-:label: my-integral
-:nowrap: true
+label: my-integral
+nowrap: true
 ---
 $$
 \int_0^1 x^2 dx = \frac{1}{3}
@@ -69,3 +69,8 @@ All code blocks above should have proper syntax highlighting regardless of YAML 
 (first line) only, so both formats work. The YAML configuration (whether inline 
 or in a block) becomes part of the `code_fence_content` which doesn't affect 
 language detection.
+
+**MyST YAML Syntax Rules:**
+- **Inline/Concise format:** Use `:key:` with leading and trailing colons (e.g., `:tags:`, `:label:`)
+- **YAML block format:** Use `key:` without leading colon, enclosed in `---` delimiters
+- Both formats are valid MyST syntax and work with this plugin

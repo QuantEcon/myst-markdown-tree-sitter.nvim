@@ -2,36 +2,32 @@
 
 Open this file in Neovim with the myst-markdown plugin to verify syntax highlighting.
 
-## ✅ Test 1: Python with :tags: (YAML-style config)
+## ✅ Test 1: Python with concise config syntax
 
 ```{code-cell} python
----
 :tags: [output_scroll]
----
 # This Python code should be highlighted
 import numpy as np
 x = np.array([1, 2, 3])
 print(x.mean())
 ```
 
-## ✅ Test 2: IPython with concise config
+## ✅ Test 2: IPython with YAML block config
 
 ```{code-cell} ipython
 ---
-:tags: [hide-input]
+tags: [hide-input]
 ---
 import pandas as pd
 df = pd.DataFrame({'a': [1, 2, 3]})
 df.head()
 ```
 
-## ✅ Test 3: Python3 with multiple config options
+## ✅ Test 3: Python3 with concise multi-option config
 
 ```{code-cell} python3
----
 :tags: [output_scroll, hide-cell]
 :linenos:
----
 def fibonacci(n):
     if n <= 1:
         return n
@@ -40,23 +36,21 @@ def fibonacci(n):
 print(fibonacci(10))
 ```
 
-## ✅ Test 4: JavaScript with config
+## ✅ Test 4: JavaScript with YAML block config
 
 ```{code-cell} javascript
 ---
-:tags: [remove-output]
+tags: [remove-output]
 ---
 // JavaScript code should be highlighted
 const greeting = "Hello, World!";
 console.log(greeting);
 ```
 
-## ✅ Test 5: Bash with config
+## ✅ Test 5: Bash with concise config
 
 ```{code-cell} bash
----
 :tags: [output_scroll]
----
 # Bash commands should be highlighted
 echo "Testing highlighting"
 ls -la | grep "test"
@@ -70,13 +64,13 @@ y = 5 + 3
 print(f"Result: {y}")
 ```
 
-## ✅ Test 7: Multiple config options with emphasized lines
+## ✅ Test 7: Python with YAML block and multiple options
 
 ```{code-cell} python
 ---
-:tags: [hide-input, output_scroll]
-:linenos:
-:emphasize-lines: 2,3
+tags: [hide-input, output_scroll]
+linenos: true
+emphasize-lines: [2, 3]
 ---
 # Multiple config options
 import matplotlib.pyplot as plt
@@ -99,7 +93,11 @@ All code blocks above should have proper syntax highlighting according to their 
 - Comments should be styled as comments
 - Strings should be highlighted as strings
 
-The configuration lines (`:tags:`, `:linenos:`, etc.) should NOT break the highlighting.
+**MyST Configuration Formats:**
+- **Concise format** (Tests 1, 3, 5): Use `:key:` with colons (e.g., `:tags: [value]`, `:linenos:`)
+- **YAML block format** (Tests 2, 4, 7): Use `---` delimiters with `key:` without leading colon
+
+Both formats should work without breaking syntax highlighting.
 
 ## 📊 How to Test
 
@@ -132,7 +130,7 @@ The configuration lines (`:tags:`, `:linenos:`, etc.) should NOT break the highl
 
 ```{math}
 ---
-:label: my-equation
+label: my-equation
 ---
 E = mc^2
 ```
@@ -141,8 +139,8 @@ E = mc^2
 
 ```{math}
 ---
-:label: quadratic-formula
-:nowrap: true
+label: quadratic-formula
+nowrap: true
 ---
 $$
 x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
@@ -153,7 +151,7 @@ $$
 
 ```{math}
 ---
-:label: matrix-eq
+label: matrix-eq
 ---
 \mathbf{A} = 
 \begin{bmatrix}
@@ -168,7 +166,7 @@ $$
 
 ```{math}
 ---
-:label: system-of-equations
+label: system-of-equations
 ---
 \begin{aligned}
     y_1 &= a_{11} x_1 + a_{12} x_2 + \cdots + a_{1k} x_k \\
@@ -190,6 +188,6 @@ All `{math}` blocks above should have proper LaTeX syntax highlighting:
 - LaTeX commands (\int, \sqrt, \frac, etc.) should be highlighted
 - Math environments (\begin{bmatrix}, \begin{aligned}, etc.) should be styled
 - Greek letters (\pi, \nabla, etc.) should be highlighted
-- The configuration lines (`:label:`, `:nowrap:`, etc.) are part of the YAML block
+- The configuration lines (`label:`, `nowrap:`, etc.) are part of the YAML block
 
 **Note:** LaTeX highlighting requires the tree-sitter latex parser to be installed.
