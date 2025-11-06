@@ -193,6 +193,18 @@ gh pr view 123
 gh issue list
 ```
 
+**When creating GitHub releases:**
+
+```bash
+# ✅ Good - Simple version number only
+gh release create v0.2.1 --title "v0.2.1" --notes-file /tmp/release_notes.md
+
+# ❌ Bad - Don't duplicate description in title
+gh release create v0.2.1 --title "v0.2.1 - Bug Fix: Description" --notes-file /tmp/release_notes.md
+```
+
+**Rationale:** The title/description is already in the release notes file. Keep the GitHub release title clean with just the version number.
+
 ### Pull Request Guidelines
 - Write clear PR descriptions (what, why, how)
 - Link related issues
