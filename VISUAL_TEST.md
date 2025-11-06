@@ -5,6 +5,7 @@ Open this file in Neovim with the myst-markdown plugin to verify syntax highligh
 ## ✅ Test 1: Python with :tags: (YAML-style config)
 
 ```{code-cell} python
+---
 :tags: [output_scroll]
 ---
 # This Python code should be highlighted
@@ -16,7 +17,9 @@ print(x.mean())
 ## ✅ Test 2: IPython with concise config
 
 ```{code-cell} ipython
+---
 :tags: [hide-input]
+---
 import pandas as pd
 df = pd.DataFrame({'a': [1, 2, 3]})
 df.head()
@@ -25,6 +28,7 @@ df.head()
 ## ✅ Test 3: Python3 with multiple config options
 
 ```{code-cell} python3
+---
 :tags: [output_scroll, hide-cell]
 :linenos:
 ---
@@ -39,7 +43,9 @@ print(fibonacci(10))
 ## ✅ Test 4: JavaScript with config
 
 ```{code-cell} javascript
+---
 :tags: [remove-output]
+---
 // JavaScript code should be highlighted
 const greeting = "Hello, World!";
 console.log(greeting);
@@ -48,7 +54,9 @@ console.log(greeting);
 ## ✅ Test 5: Bash with config
 
 ```{code-cell} bash
+---
 :tags: [output_scroll]
+---
 # Bash commands should be highlighted
 echo "Testing highlighting"
 ls -la | grep "test"
@@ -65,6 +73,7 @@ print(f"Result: {y}")
 ## ✅ Test 7: Multiple config options with emphasized lines
 
 ```{code-cell} python
+---
 :tags: [hide-input, output_scroll]
 :linenos:
 :emphasize-lines: 2,3
@@ -110,3 +119,77 @@ The configuration lines (`:tags:`, `:linenos:`, etc.) should NOT break the highl
 - Changed from `(#eq? @_lang "{code-cell} python")` 
 - To `(#match? @_lang "^\\{code-cell\\}\\s+(python|ipython|ipython3)")`
 - This allows the `info_string` to contain additional content (config) after the language specifier
+
+## ✅ Math Directives (LaTeX Support)
+
+### Test 8: Simple {math} directive without config
+
+```{math}
+\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
+```
+
+### Test 9: {math} directive with label
+
+```{math}
+---
+:label: my-equation
+---
+E = mc^2
+```
+
+### Test 10: {math} directive with multiple options
+
+```{math}
+---
+:label: quadratic-formula
+:nowrap: true
+---
+$$
+x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+$$
+```
+
+### Test 11: Matrix equation with label
+
+```{math}
+---
+:label: matrix-eq
+---
+\mathbf{A} = 
+\begin{bmatrix}
+    a_{11} & a_{12} & \cdots & a_{1n} \\
+    a_{21} & a_{22} & \cdots & a_{2n} \\
+    \vdots & \vdots & \ddots & \vdots \\
+    a_{m1} & a_{m2} & \cdots & a_{mn}
+\end{bmatrix}
+```
+
+### Test 12: Aligned equations
+
+```{math}
+---
+:label: system-of-equations
+---
+\begin{aligned}
+    y_1 &= a_{11} x_1 + a_{12} x_2 + \cdots + a_{1k} x_k \\
+    y_2 &= a_{21} x_1 + a_{22} x_2 + \cdots + a_{2k} x_k \\
+    &\vdots \\
+    y_n &= a_{n1} x_1 + a_{n2} x_2 + \cdots + a_{nk} x_k
+\end{aligned}
+```
+
+### Test 13: Standard $$ delimiters (baseline - should already work)
+
+$$
+\nabla \times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t}
+$$
+
+## 🔍 Expected Behavior for Math
+
+All `{math}` blocks above should have proper LaTeX syntax highlighting:
+- LaTeX commands (\int, \sqrt, \frac, etc.) should be highlighted
+- Math environments (\begin{bmatrix}, \begin{aligned}, etc.) should be styled
+- Greek letters (\pi, \nabla, etc.) should be highlighted
+- The configuration lines (`:label:`, `:nowrap:`, etc.) are part of the YAML block
+
+**Note:** LaTeX highlighting requires the tree-sitter latex parser to be installed.
