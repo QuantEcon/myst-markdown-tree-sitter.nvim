@@ -143,6 +143,14 @@ Syntax highlighting requires the corresponding tree-sitter parsers to be install
 \int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
 ```
 
+**Comparison - Same equation with standard $$ delimiters:**
+
+$$
+\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
+$$
+
+**Expected:** Both should show LaTeX syntax highlighting (commands like `\int`, `\sqrt`, subscripts, superscripts highlighted).
+
 ### Test 9: {math} directive with label
 
 ```{math}
@@ -151,6 +159,12 @@ label: my-equation
 ---
 E = mc^2
 ```
+
+**Comparison - Standard $$ delimiter:**
+
+$$
+E = mc^2
+$$
 
 ### Test 10: {math} directive with multiple options
 
@@ -163,6 +177,14 @@ $$
 x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
 $$
 ```
+
+**Comparison - Standard $$ delimiter:**
+
+$$
+x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+$$
+
+**Note:** In the `{math}` directive with `nowrap: true`, you need to include `$$` delimiters inside the block.
 
 ### Test 11: Matrix equation with label
 
@@ -179,6 +201,18 @@ label: matrix-eq
 \end{bmatrix}
 ```
 
+**Comparison - Standard $$ delimiter:**
+
+$$
+\mathbf{A} = 
+\begin{bmatrix}
+    a_{11} & a_{12} & \cdots & a_{1n} \\
+    a_{21} & a_{22} & \cdots & a_{2n} \\
+    \vdots & \vdots & \ddots & \vdots \\
+    a_{m1} & a_{m2} & \cdots & a_{mn}
+\end{bmatrix}
+$$
+
 ### Test 12: Aligned equations
 
 ```{math}
@@ -193,18 +227,36 @@ label: system-of-equations
 \end{aligned}
 ```
 
+**Comparison - Standard $$ delimiter:**
+
+$$
+\begin{aligned}
+    y_1 &= a_{11} x_1 + a_{12} x_2 + \cdots + a_{1k} x_k \\
+    y_2 &= a_{21} x_1 + a_{22} x_2 + \cdots + a_{2k} x_k \\
+    &\vdots \\
+    y_n &= a_{n1} x_1 + a_{n2} x_2 + \cdots + a_{nk} x_k
+\end{aligned}
+$$
+
 ### Test 13: Standard $$ delimiters (baseline - should already work)
 
 $$
 \nabla \times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t}
 $$
 
+**Note:** This is the baseline test - standard `$$` delimiters should work by default with markdown's built-in math support.
+
 ## 🔍 Expected Behavior for Math
 
-All `{math}` blocks above should have proper LaTeX syntax highlighting:
-- LaTeX commands (\int, \sqrt, \frac, etc.) should be highlighted
-- Math environments (\begin{bmatrix}, \begin{aligned}, etc.) should be styled
-- Greek letters (\pi, \nabla, etc.) should be highlighted
-- The configuration lines (`label:`, `nowrap:`, etc.) are part of the YAML block
+**Both `{math}` directives AND standard `$$` delimiters should have LaTeX syntax highlighting:**
 
-**Note:** LaTeX highlighting requires the tree-sitter latex parser to be installed.
+- LaTeX commands (`\int`, `\sqrt`, `\frac`, `\mathbf`, etc.) should be highlighted
+- Math environments (`\begin{bmatrix}`, `\begin{aligned}`, etc.) should be styled
+- Greek letters (`\pi`, `\nabla`, etc.) should be highlighted
+- Subscripts and superscripts should be properly styled
+- The configuration lines (`label:`, `nowrap:`, etc.) are part of the YAML block and won't be highlighted as LaTeX
+
+**Comparison Test:** 
+The `{math}` directive examples should have **identical highlighting** to their corresponding `$$` delimiter versions below them. If the `$$` version is highlighted but the `{math}` version isn't, the LaTeX parser may not be installed.
+
+**Note:** LaTeX highlighting requires the tree-sitter latex parser to be installed: `:TSInstall latex`
