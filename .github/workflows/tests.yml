@@ -53,14 +53,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install StyLua
+      - name: Check formatting with StyLua
         uses: JohnnyMorganz/stylua-action@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: latest
-
-      - name: Check formatting with StyLua
-        run: stylua --check lua/ plugin/ ftdetect/ ftplugin/ test/
+          args: --check lua/ plugin/ ftdetect/ ftplugin/ test/
 
       - name: Install Luacheck
         run: |
