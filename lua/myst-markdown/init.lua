@@ -20,26 +20,26 @@ function M.setup(opts)
     utils.error("MyST Markdown plugin requires Neovim >= 0.8.0")
     return
   end
-  
+
   -- Merge user configuration with defaults
   local valid, err = config.validate(opts or {})
   if not valid then
     utils.error("Invalid configuration: " .. err)
     return
   end
-  
+
   config.merge(opts)
   utils.info("Configuration loaded")
-  
+
   -- Setup filetype detection
   filetype.setup()
-  
+
   -- Setup highlighting autocmd for myst filetype
   highlighting.setup_filetype_autocmd()
-  
+
   -- Setup user commands
   commands.setup()
-  
+
   utils.info("MyST Markdown plugin initialized (v" .. M.version .. ")")
 end
 

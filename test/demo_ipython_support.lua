@@ -7,7 +7,7 @@ print()
 -- Function to simulate injection query matching
 local function test_injection_query(info_string, file_type)
   local content = ""
-  
+
   if file_type == "myst" then
     local file = io.open("queries/myst/injections.scm", "r")
     if file then
@@ -21,12 +21,12 @@ local function test_injection_query(info_string, file_type)
       file:close()
     end
   end
-  
+
   -- Check what injection language would be applied
   if info_string == "{code-cell} python" and content:find('{code%-cell} python"') then
     return "python"
   elseif info_string == "{code-cell} ipython" and content:find('{code%-cell} ipython"') then
-    return "python" 
+    return "python"
   elseif info_string == "{code-cell} ipython3" and content:find('{code%-cell} ipython3"') then
     return "python"
   elseif info_string == "ipython" and content:find('"ipython"') then
@@ -45,7 +45,7 @@ local test_cases = {
   { pattern = "{code-cell} ipython3", description = "NEW: MyST iPython3 code-cell" },
   { pattern = "python", description = "Standard markdown Python block" },
   { pattern = "ipython", description = "NEW: Markdown iPython block" },
-  { pattern = "ipython3", description = "NEW: Markdown iPython3 block" }
+  { pattern = "ipython3", description = "NEW: Markdown iPython3 block" },
 }
 
 print("Testing injection behavior for MyST file type:")
@@ -55,7 +55,7 @@ for _, test in ipairs(test_cases) do
   local result = test_injection_query(test.pattern, "myst")
   local status = result == "python" and "✓" or "✗"
   local new_indicator = test.description:match("NEW:") and " 🆕" or ""
-  
+
   print(string.format("%s ```%s", status, test.pattern))
   print(string.format("   %s → %s%s", test.description, result, new_indicator))
   print()
@@ -68,7 +68,7 @@ for _, test in ipairs(test_cases) do
   local result = test_injection_query(test.pattern, "markdown")
   local status = result == "python" and "✓" or "✗"
   local new_indicator = test.description:match("NEW:") and " 🆕" or ""
-  
+
   print(string.format("%s ```%s", status, test.pattern))
   print(string.format("   %s → %s%s", test.description, result, new_indicator))
   print()

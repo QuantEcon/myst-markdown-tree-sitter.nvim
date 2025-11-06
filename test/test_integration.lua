@@ -35,15 +35,15 @@ local mock_vim = {
         "```",
         "```{code-cell}",
         "print('default python')",
-        "```"
+        "```",
       }
     end,
     nvim_get_current_buf = function()
       return 1
-    end
+    end,
   },
   bo = {
-    filetype = "markdown"
+    filetype = "markdown",
   },
   wo = {},
   cmd = function(cmd_str)
@@ -56,18 +56,20 @@ local mock_vim = {
     end,
     query = {
       get = function(lang, query_type)
-        print("  Mock: Got treesitter query " .. (lang or "unknown") .. "/" .. (query_type or "unknown"))
+        print(
+          "  Mock: Got treesitter query " .. (lang or "unknown") .. "/" .. (query_type or "unknown")
+        )
         return {} -- mock query object
-      end
-    }
-  }
+      end,
+    },
+  },
 }
 
 -- Set up the mock vim global
 _G.vim = mock_vim
 
 -- Test 1: Load and setup the plugin
-local success, myst_module = pcall(require, 'myst-markdown')
+local success, myst_module = pcall(require, "myst-markdown")
 if not success then
   print("✗ Failed to load MyST module:", myst_module)
   return 1
@@ -101,7 +103,7 @@ else
   return 1
 end
 
--- Test disable_myst 
+-- Test disable_myst
 local disable_success = pcall(function()
   myst_module.disable_myst()
 end)

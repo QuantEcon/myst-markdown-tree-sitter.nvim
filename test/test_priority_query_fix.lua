@@ -28,7 +28,7 @@ else
 end
 
 -- Test 2: Check for myst.code_cell.directive capture
-if content:match('@myst%.code_cell%.directive') then
+if content:match("@myst%.code_cell%.directive") then
   print("✓ Found @myst.code_cell.directive capture")
 else
   print("✗ Missing @myst.code_cell.directive capture")
@@ -36,7 +36,7 @@ else
 end
 
 -- Test 3: Verify proper regex pattern for code-cell
-if content:match('code%-cell') then
+if content:match("code%-cell") then
   print("✓ Found proper {code-cell} regex pattern")
 else
   print("✗ Missing proper {code-cell} regex pattern")
@@ -44,7 +44,7 @@ else
 end
 
 -- Test 4: Verify no general directive patterns (scope limited to code-cell only)
-if content:match('@myst%.directive') and not content:match('@myst%.code_cell%.directive') then
+if content:match("@myst%.directive") and not content:match("@myst%.code_cell%.directive") then
   print("✗ Found unexpected general directive pattern - should only support {code-cell}")
   return 1
 else
@@ -59,7 +59,7 @@ print("✓ Scope correctly limited to {code-cell} directives only")
 print("✓ This should resolve intermittent MyST highlighting issues")
 
 print("\nThe fix works by:")
-print("  - Adding #set! \"priority\" predicate to Tree-sitter queries")
+print('  - Adding #set! "priority" predicate to Tree-sitter queries')
 print("  - Priority 110 for {code-cell} directives (highest priority)")
 print("  - Tree-sitter will automatically use this priority during highlighting")
 print("  - No complex Lua-based timing or retry logic needed")

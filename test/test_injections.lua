@@ -20,7 +20,7 @@ end
 local myst_injections = read_file("queries/myst/injections.scm")
 if myst_injections then
   print("✓ MyST injection queries file exists")
-  
+
   -- Check that default language is now python
   if myst_injections:match('injection%.language "python"%)') then
     print("✓ Default code-cell language is set to python")
@@ -28,7 +28,7 @@ if myst_injections then
     print("✗ Default code-cell language is not python")
     return 1
   end
-  
+
   -- Check for python code-cell pattern
   if myst_injections:match('"%{code%-cell%} python"') then
     print("✓ Python code-cell pattern exists")
@@ -45,7 +45,7 @@ end
 local markdown_injections = read_file("queries/markdown/injections.scm")
 if markdown_injections then
   print("✓ Markdown injection queries file exists")
-  
+
   -- Check that default language is now python
   if markdown_injections:match('injection%.language "python"%)') then
     print("✓ Default code-cell language is set to python (markdown)")

@@ -57,13 +57,13 @@ function M.get_buf_lines(buf, start, end_line)
   if not M.is_valid_buffer(buf) then
     return nil
   end
-  
+
   local ok, lines = pcall(vim.api.nvim_buf_get_lines, buf, start, end_line, false)
   if not ok then
     M.warn("Failed to get buffer lines: " .. tostring(lines))
     return nil
   end
-  
+
   return lines
 end
 
@@ -80,12 +80,12 @@ function M.has_parser(lang)
   if not M.has_treesitter() then
     return false
   end
-  
+
   local ok, parsers = pcall(require, "nvim-treesitter.parsers")
   if not ok then
     return false
   end
-  
+
   return parsers.has_parser(lang)
 end
 
@@ -97,13 +97,13 @@ function M.get_parser(buf, lang)
   if not M.is_valid_buffer(buf) then
     return nil
   end
-  
+
   local ok, parser = pcall(vim.treesitter.get_parser, buf, lang)
   if not ok then
     M.debug("Failed to get parser: " .. tostring(parser))
     return nil
   end
-  
+
   return parser
 end
 
@@ -127,7 +127,9 @@ end
 --- Wait synchronously
 ---@param timeout number Timeout in milliseconds
 function M.wait(timeout)
-  vim.wait(timeout, function() return false end)
+  vim.wait(timeout, function()
+    return false
+  end)
 end
 
 --- Cache implementation for detection results

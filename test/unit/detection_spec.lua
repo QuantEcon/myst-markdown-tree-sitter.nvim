@@ -8,9 +8,11 @@ describe("pattern detection", function()
     -- Helper function to detect MyST patterns
     detect_myst_patterns = function(lines)
       for _, line in ipairs(lines) do
-        if line:match("^```{code%-cell}") or
-           line:match("^```{[%w%-_]+}") or
-           line:match("^{[%w%-_]+}") then
+        if
+          line:match("^```{code%-cell}")
+          or line:match("^```{[%w%-_]+}")
+          or line:match("^{[%w%-_]+}")
+        then
           return true
         end
       end
@@ -79,7 +81,7 @@ describe("pattern detection", function()
         "",
         "```{code-cell} python",
         "print('test')",
-        "```"
+        "```",
       }
       assert.is_true(detect_myst_patterns(lines))
     end)
@@ -93,7 +95,7 @@ describe("pattern detection", function()
         "Line 1",
         "Line 2",
         "```{code-cell} python",
-        "Line 4"
+        "Line 4",
       }
       assert.is_true(detect_myst_patterns(lines))
     end)

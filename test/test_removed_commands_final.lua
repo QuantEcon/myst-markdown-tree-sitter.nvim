@@ -6,9 +6,15 @@ print("=== Final Verification: MyST Plugin Without Manual Commands ===")
 -- Mock a minimal vim environment
 local mock_vim = {
   api = {
-    nvim_get_current_buf = function() return 1 end,
-    nvim_buf_get_lines = function() return {"```{code-cell} python", "print('test')", "```"} end,
-    nvim_buf_get_name = function() return "test.md" end,
+    nvim_get_current_buf = function()
+      return 1
+    end,
+    nvim_buf_get_lines = function()
+      return { "```{code-cell} python", "print('test')", "```" }
+    end,
+    nvim_buf_get_name = function()
+      return "test.md"
+    end,
     nvim_set_hl = function() end,
     nvim_create_autocmd = function() end,
     nvim_create_user_command = function(name, fn, opts)
@@ -16,17 +22,41 @@ local mock_vim = {
     end,
   },
   bo = { filetype = "markdown" },
-  defer_fn = function(fn, delay) fn() end,
-  treesitter = { start = function() return true end, query = { get = function() return {} end } },
-  tbl_contains = function(t, v) for _, val in ipairs(t) do if val == v then return true end end return false end,
-  tbl_keys = function(t) local k = {} for key in pairs(t) do table.insert(k, key) end return k end,
+  defer_fn = function(fn, delay)
+    fn()
+  end,
+  treesitter = {
+    start = function()
+      return true
+    end,
+    query = {
+      get = function()
+        return {}
+      end,
+    },
+  },
+  tbl_contains = function(t, v)
+    for _, val in ipairs(t) do
+      if val == v then
+        return true
+      end
+    end
+    return false
+  end,
+  tbl_keys = function(t)
+    local k = {}
+    for key in pairs(t) do
+      table.insert(k, key)
+    end
+    return k
+  end,
   cmd = function() end,
 }
 
 _G.vim = mock_vim
 
 -- Test module loading
-local success, myst_module = pcall(require, 'myst-markdown')
+local success, myst_module = pcall(require, "myst-markdown")
 if not success then
   print("✗ Failed to load MyST module:", myst_module)
   return 1

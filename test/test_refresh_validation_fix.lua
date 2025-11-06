@@ -8,31 +8,59 @@ print("=== Testing MyST Refresh Validation Fix ===")
 -- Mock vim environment for testing
 local mock_vim = {
   api = {
-    nvim_get_current_buf = function() return 1 end,
-    nvim_buf_is_valid = function() return true end,
-    nvim_buf_get_lines = function() return {"{code-cell} python", "print('hello')", "```"} end,
-    nvim_buf_get_name = function() return "test.md" end,
-    nvim_create_autocmd = function() return true end,
-    nvim_create_user_command = function() return true end,
-    nvim_set_hl = function() return true end,
+    nvim_get_current_buf = function()
+      return 1
+    end,
+    nvim_buf_is_valid = function()
+      return true
+    end,
+    nvim_buf_get_lines = function()
+      return { "{code-cell} python", "print('hello')", "```" }
+    end,
+    nvim_buf_get_name = function()
+      return "test.md"
+    end,
+    nvim_create_autocmd = function()
+      return true
+    end,
+    nvim_create_user_command = function()
+      return true
+    end,
+    nvim_set_hl = function()
+      return true
+    end,
   },
   bo = { filetype = "myst" },
   treesitter = {
-    query = { get = function() return {} end },
-    stop = function() return true end,
-    start = function() return true end,
+    query = {
+      get = function()
+        return {}
+      end,
+    },
+    stop = function()
+      return true
+    end,
+    start = function()
+      return true
+    end,
   },
-  wait = function() return true end,
-  defer_fn = function(fn) fn() end,
-  cmd = function() return true end,
+  wait = function()
+    return true
+  end,
+  defer_fn = function(fn)
+    fn()
+  end,
+  cmd = function()
+    return true
+  end,
 }
 
 -- Mock tree-sitter modules with different scenarios
 local function create_mock_treesitter(active_status)
   return {
     highlight = {
-      active = active_status and { [1] = {} } or nil
-    }
+      active = active_status and { [1] = {} } or nil,
+    },
   }
 end
 
@@ -40,7 +68,7 @@ end
 _G.vim = mock_vim
 
 -- Test module loading
-local success, myst_module = pcall(require, 'myst-markdown')
+local success, myst_module = pcall(require, "myst-markdown")
 if not success then
   print("✗ Failed to load MyST module:", myst_module)
   return 1

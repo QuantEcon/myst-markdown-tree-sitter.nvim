@@ -14,17 +14,27 @@ local mock_vim = {
   api = {
     nvim_create_autocmd = function() end,
     nvim_create_user_command = function() end,
-    nvim_buf_get_lines = function() return {} end,
+    nvim_buf_get_lines = function()
+      return {}
+    end,
     nvim_buf_set_extmark = function() end,
-    nvim_create_namespace = function() return 1 end,
-    nvim_list_runtime_paths = function() 
-      return {"/fake/path/myst-markdown-tree-sitter.nvim"} 
+    nvim_create_namespace = function()
+      return 1
+    end,
+    nvim_list_runtime_paths = function()
+      return { "/fake/path/myst-markdown-tree-sitter.nvim" }
     end,
   },
   fn = {
-    stdpath = function() return "/fake/data" end,
-    isdirectory = function() return 0 end,  -- Simulate no writable directories
-    filewritable = function() return 0 end,  -- Simulate no writable files
+    stdpath = function()
+      return "/fake/data"
+    end,
+    isdirectory = function()
+      return 0
+    end, -- Simulate no writable directories
+    filewritable = function()
+      return 0
+    end, -- Simulate no writable files
   },
   bo = {},
   wo = {},
@@ -34,7 +44,7 @@ local mock_vim = {
 _G.vim = mock_vim
 
 -- Test 1: Load MyST module
-local success, myst_module = pcall(require, 'myst-markdown')
+local success, myst_module = pcall(require, "myst-markdown")
 if not success then
   print("✗ Failed to load MyST module:", myst_module)
   return 1
@@ -68,7 +78,7 @@ print("✓ Injection queries setup completed without file writes")
 
 print("\n=== Test Summary ===")
 print("✓ Module loads successfully")
-print("✓ Setup runs without errors") 
+print("✓ Setup runs without errors")
 print("✓ No files are written during setup")
 print("✓ Plugin will not create local git changes")
 

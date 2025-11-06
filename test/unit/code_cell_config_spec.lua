@@ -2,7 +2,6 @@
 -- Validates that tree-sitter injection works with YAML config blocks
 
 describe("Code-cell with configuration", function()
-
   describe("YAML configuration detection", function()
     it("should detect Python code-cell with :tags: config", function()
       local content = [[```{code-cell} python
@@ -11,19 +10,19 @@ describe("Code-cell with configuration", function()
 x = 1 + 2
 print(x)
 ```]]
-      
+
       local bufnr = vim.api.nvim_create_buf(false, true)
       vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, vim.split(content, "\n"))
       vim.bo[bufnr].filetype = "myst"
-      
+
       -- Check if tree-sitter can parse this
       local parser = vim.treesitter.get_parser(bufnr, "markdown")
       assert.is_not_nil(parser, "Parser should be available")
-      
+
       -- Parse the buffer
       local tree = parser:parse()[1]
       assert.is_not_nil(tree, "Parse tree should exist")
-      
+
       vim.api.nvim_buf_delete(bufnr, { force = true })
     end)
 
@@ -32,17 +31,17 @@ print(x)
 :tags: [hide-input]
 import numpy as np
 ```]]
-      
+
       local bufnr = vim.api.nvim_create_buf(false, true)
       vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, vim.split(content, "\n"))
       vim.bo[bufnr].filetype = "myst"
-      
+
       local parser = vim.treesitter.get_parser(bufnr, "markdown")
       assert.is_not_nil(parser, "Parser should be available")
-      
+
       local tree = parser:parse()[1]
       assert.is_not_nil(tree, "Parse tree should exist")
-      
+
       vim.api.nvim_buf_delete(bufnr, { force = true })
     end)
 
@@ -55,14 +54,14 @@ import numpy as np
 x = 1
 y = 2
 ```]]
-      
+
       local bufnr = vim.api.nvim_create_buf(false, true)
       vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, vim.split(content, "\n"))
       vim.bo[bufnr].filetype = "myst"
-      
+
       local parser = vim.treesitter.get_parser(bufnr, "markdown")
       assert.is_not_nil(parser, "Parser should be available")
-      
+
       vim.api.nvim_buf_delete(bufnr, { force = true })
     end)
   end)
@@ -74,19 +73,19 @@ y = 2
 ---
 x = 1 + 2
 ```]]
-      
+
       local bufnr = vim.api.nvim_create_buf(false, true)
       vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, vim.split(content, "\n"))
       vim.bo[bufnr].filetype = "myst"
-      
+
       local parser = vim.treesitter.get_parser(bufnr, "markdown")
       assert.is_not_nil(parser, "Parser should be available")
-      
+
       -- Verify parser can parse the content
       local trees = parser:parse()
       assert.is_not_nil(trees, "Parse trees should exist")
       assert.is_true(#trees > 0, "Should have at least one parse tree")
-      
+
       vim.api.nvim_buf_delete(bufnr, { force = true })
     end)
 
@@ -95,19 +94,19 @@ x = 1 + 2
 :tags: [remove-output]
 console.log("test");
 ```]]
-      
+
       local bufnr = vim.api.nvim_create_buf(false, true)
       vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, vim.split(content, "\n"))
       vim.bo[bufnr].filetype = "myst"
-      
+
       local parser = vim.treesitter.get_parser(bufnr, "markdown")
       assert.is_not_nil(parser, "Parser should be available")
-      
+
       -- Verify parser can parse the content
       local trees = parser:parse()
       assert.is_not_nil(trees, "Parse trees should exist")
       assert.is_true(#trees > 0, "Should have at least one parse tree")
-      
+
       vim.api.nvim_buf_delete(bufnr, { force = true })
     end)
   end)
@@ -118,19 +117,19 @@ console.log("test");
 x = 1 + 2
 print(x)
 ```]]
-      
+
       local bufnr = vim.api.nvim_create_buf(false, true)
       vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, vim.split(content, "\n"))
       vim.bo[bufnr].filetype = "myst"
-      
+
       local parser = vim.treesitter.get_parser(bufnr, "markdown")
       assert.is_not_nil(parser, "Parser should be available")
-      
+
       -- Verify parser can parse the content
       local trees = parser:parse()
       assert.is_not_nil(trees, "Parse trees should exist")
       assert.is_true(#trees > 0, "Should have at least one parse tree")
-      
+
       vim.api.nvim_buf_delete(bufnr, { force = true })
     end)
   end)
@@ -156,7 +155,11 @@ print(x)
 
     for _, test_case in ipairs(languages) do
       it(
-        string.format("should inject %s parser for {code-cell} %s with config", test_case.parser, test_case.lang),
+        string.format(
+          "should inject %s parser for {code-cell} %s with config",
+          test_case.parser,
+          test_case.lang
+        ),
         function()
           local content = string.format(
             [[```{code-cell} %s

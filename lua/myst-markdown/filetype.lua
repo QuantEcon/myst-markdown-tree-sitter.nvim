@@ -18,15 +18,15 @@ function M.detect_myst(buf)
       return cached
     end
   end
-  
+
   -- Get buffer lines to scan
   local scan_lines = config.get_value("detection.scan_lines") or 50
   local lines = utils.get_buf_lines(buf, 0, scan_lines)
-  
+
   if not lines then
     return false
   end
-  
+
   -- Get detection patterns from config
   local patterns = config.get_value("detection.patterns") or {}
   local all_patterns = {
@@ -34,7 +34,7 @@ function M.detect_myst(buf)
     patterns.myst_directive,
     patterns.standalone_directive,
   }
-  
+
   -- Check each line for MyST patterns
   for _, line in ipairs(lines) do
     if utils.matches_any(line, all_patterns) then
@@ -45,12 +45,12 @@ function M.detect_myst(buf)
       return true
     end
   end
-  
+
   -- Cache negative result
   if config.get_value("performance.cache_enabled") then
     detection_cache[buf] = false
   end
-  
+
   return false
 end
 
@@ -71,11 +71,11 @@ function M.setup_primary_detection()
     pattern = "*.md",
     callback = function(args)
       local buf = args.buf
-      
+
       if not utils.is_valid_buffer(buf) then
         return
       end
-      
+
       if M.detect_myst(buf) then
         vim.bo[buf].filetype = "myst"
         utils.debug("Detected MyST file on BufRead/BufNewFile")
@@ -91,15 +91,15 @@ function M.setup_secondary_detection()
     pattern = "markdown",
     callback = function(args)
       local buf = args.buf
-      
+
       if not utils.is_valid_buffer(buf) then
         return
       end
-      
+
       if M.detect_myst(buf) then
         vim.bo[buf].filetype = "myst"
         utils.debug("Overriding markdown filetype to myst")
-        
+
         -- Defer highlighting setup
         local defer_timeout = config.get_value("performance.defer_timeout") or 50
         utils.defer(function()
@@ -123,7 +123,7 @@ function M.setup_cache_invalidation()
     end,
     desc = "Clear MyST detection cache on buffer write",
   })
-  
+
   -- Clear cache when buffer is deleted
   vim.api.nvim_create_autocmd("BufDelete", {
     callback = function(args)

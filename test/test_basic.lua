@@ -6,7 +6,7 @@
 print("Testing MyST markdown plugin...")
 
 -- Test 1: Module can be loaded
-local success, myst_module = pcall(require, 'myst-markdown')
+local success, myst_module = pcall(require, "myst-markdown")
 if success then
   print("✓ MyST module loads successfully")
 else
@@ -15,7 +15,7 @@ else
 end
 
 -- Test 2: Setup function exists
-if type(myst_module.setup) == 'function' then
+if type(myst_module.setup) == "function" then
   print("✓ Setup function exists")
 else
   print("✗ Setup function not found")
@@ -23,23 +23,25 @@ else
 end
 
 -- Test 3: File pattern detection logic
--- Note: This tests MyST file detection patterns. Only {code-cell} directives 
+-- Note: This tests MyST file detection patterns. Only {code-cell} directives
 -- are currently highlighted, but other MyST patterns are detected for filetype identification.
 local function test_myst_detection(content, expected)
   local is_myst = false
-  
+
   for _, line in ipairs(content) do
-    if line:match("^```{code%-cell}") or       -- Code-cell directive (supported for highlighting)
-       line:match("^```{[%w%-_]+}") or         -- Other MyST directives like {raw}, {note}, etc. (detected only)
-       line:match("^{[%w%-_]+}") or            -- Standalone MyST directives (detected only)
-       line:match("{[%w%-_]+}`[^`]*`") or      -- MyST roles like {doc}`filename` (detected only)
-       line:match("^:::{[%w%-_]+}") or         -- MyST block directives (detected only)
-       line:match("^---$") then                -- YAML frontmatter (common in MyST, detected only)
+    if
+      line:match("^```{code%-cell}") -- Code-cell directive (supported for highlighting)
+      or line:match("^```{[%w%-_]+}") -- Other MyST directives like {raw}, {note}, etc. (detected only)
+      or line:match("^{[%w%-_]+}") -- Standalone MyST directives (detected only)
+      or line:match("{[%w%-_]+}`[^`]*`") -- MyST roles like {doc}`filename` (detected only)
+      or line:match("^:::{[%w%-_]+}") -- MyST block directives (detected only)
+      or line:match("^---$")
+    then -- YAML frontmatter (common in MyST, detected only)
       is_myst = true
       break
     end
   end
-  
+
   if is_myst == expected then
     return true
   else
@@ -50,30 +52,30 @@ end
 -- Test cases for MyST detection
 local test_cases = {
   {
-    content = {"# Regular markdown", "This is just normal markdown"},
+    content = { "# Regular markdown", "This is just normal markdown" },
     expected = false,
-    name = "Regular markdown"
+    name = "Regular markdown",
   },
   {
-    content = {"```{code-cell} python", "print('hello')", "```"},
+    content = { "```{code-cell} python", "print('hello')", "```" },
     expected = true,
-    name = "Code-cell directive"
+    name = "Code-cell directive",
   },
   {
-    content = {"Some text with {doc}`filename` role"},
+    content = { "Some text with {doc}`filename` role" },
     expected = true,
-    name = "MyST role"
+    name = "MyST role",
   },
   {
-    content = {":::{note}", "This is a note", ":::"},
+    content = { ":::{note}", "This is a note", ":::" },
     expected = true,
-    name = "Block directive (detected but not highlighted)"
+    name = "Block directive (detected but not highlighted)",
   },
   {
-    content = {"---", "title: Test", "---"},
+    content = { "---", "title: Test", "---" },
     expected = true,
-    name = "YAML frontmatter"
-  }
+    name = "YAML frontmatter",
+  },
 }
 
 print("\nTesting MyST detection patterns...")

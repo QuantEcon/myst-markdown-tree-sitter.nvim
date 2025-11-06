@@ -7,4 +7,4 @@ end
 vim.g.loaded_myst_markdown = 1
 
 -- Initialize the plugin
-require('myst-markdown').setup()
+require("myst-markdown").setup()
