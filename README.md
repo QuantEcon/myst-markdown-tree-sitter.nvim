@@ -81,7 +81,8 @@ To test unreleased changes from a specific branch (useful for testing fixes befo
 
 - Neovim >= 0.8.0
 - [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
-- Tree-sitter markdown parser (`TSInstall markdown markdown_inline`)
+- Tree-sitter markdown parser: `:TSInstall markdown markdown_inline`
+- **Recommended:** `:TSInstall python latex` (for code-cell and math directive highlighting)
 
 ## Usage
 
@@ -136,20 +137,31 @@ print(df)
 
 Will be highlighted with language-specific syntax highlighting, similar to standard markdown code blocks.
 
+### Supported Languages
 
-**Supported Languages in Code Cells:**
-- Python (`python`)
-- JavaScript (`javascript`) 
-- TypeScript (`typescript`)
-- Bash (`bash`)
-- R (`r`)
-- Julia (`julia`)
-- C (`c`)
-- C++ (`cpp`)
-- Rust (`rust`)
-- Go (`go`)
+The plugin provides injection queries for the following languages in `{code-cell}` directives:
 
-For other languages, ensure you have the corresponding tree-sitter parser installed with `:TSInstall <language>`.
+**Commonly Available:**
+- Python (`python`, `ipython`, `ipython3`) - Usually pre-installed ✅
+- LaTeX (for `{math}` directives) - Install with `:TSInstall latex`
+
+**Additional Languages** (require manual installation):
+- JavaScript (`javascript`, `js`) - `:TSInstall javascript`
+- TypeScript (`typescript`, `ts`) - `:TSInstall typescript`
+- Bash (`bash`, `sh`) - `:TSInstall bash`
+- R (`r`) - `:TSInstall r`
+- Julia (`julia`) - `:TSInstall julia`
+- C (`c`) - `:TSInstall c`
+- C++ (`cpp`) - `:TSInstall cpp`
+- Rust (`rust`) - `:TSInstall rust`
+- Go (`go`) - `:TSInstall go`
+
+**Important:** Syntax highlighting only works if you've installed the corresponding tree-sitter parser. If a code-cell isn't highlighted, install the parser with `:TSInstall <language>`.
+
+**To install multiple parsers at once:**
+```vim
+:TSInstall python latex javascript bash rust
+```
 
 ### MyST Code-Cell Directives
 
@@ -191,10 +203,24 @@ The plugin provides several commands for troubleshooting and manual control:
 
 If MyST highlighting is not working:
 
-1. Run `:MystStatus` for a quick health check
-2. For detailed diagnosis, run `:MystDebug`
-3. Ensure the file contains MyST directives like `{code-cell}`
+1. **Run `:MystStatus`** for a quick health check
+2. **For detailed diagnosis, run `:MystDebug`**
+3. Ensure the file contains MyST directives like `{code-cell}` or `{math}`
 4. Verify nvim-treesitter is installed and markdown parser is available
+
+**Code-cell highlighting not working?**
+- Check if the language parser is installed: `:TSInstall <language>`
+- Example: For Python highlighting, run `:TSInstall python`
+- Verify parser is loaded: `:lua print(vim.inspect(require('nvim-treesitter.parsers').get_parser()))`
+
+**Math directive highlighting not working?**
+- Install the LaTeX parser: `:TSInstall latex`
+- Verify it's installed: `:TSInstall` (check the list)
+
+**To see which parsers you have installed:**
+```vim
+:TSInstallInfo
+```
 
 ## Documentation
 

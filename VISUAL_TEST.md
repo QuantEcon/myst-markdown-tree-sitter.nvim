@@ -36,24 +36,27 @@ def fibonacci(n):
 print(fibonacci(10))
 ```
 
-## ✅ Test 4: JavaScript with YAML block config
+## ✅ Test 4: Rust with YAML block config
 
-```{code-cell} javascript
+```{code-cell} rust
 ---
 tags: [remove-output]
 ---
-// JavaScript code should be highlighted
-const greeting = "Hello, World!";
-console.log(greeting);
+// Rust code should be highlighted
+fn main() {
+    let greeting = "Hello, World!";
+    println!("{}", greeting);
+}
 ```
 
-## ✅ Test 5: Bash with concise config
+## ✅ Test 5: Python with concise config (numeric operations)
 
-```{code-cell} bash
+```{code-cell} python
 :tags: [output_scroll]
-# Bash commands should be highlighted
-echo "Testing highlighting"
-ls -la | grep "test"
+# Numeric computations should be highlighted
+import math
+result = math.sqrt(16) + math.pi
+print(f"Result: {result}")
 ```
 
 ## ✅ Test 6: No config (baseline - should still work)
@@ -88,8 +91,7 @@ plt.show()
 
 All code blocks above should have proper syntax highlighting according to their language:
 - Python keywords (import, def, return, etc.) should be highlighted
-- JavaScript keywords (const, console, etc.) should be highlighted  
-- Bash commands (echo, ls, grep) should be highlighted
+- Rust keywords (fn, let, etc.) should be highlighted  
 - Comments should be styled as comments
 - Strings should be highlighted as strings
 
@@ -98,6 +100,21 @@ All code blocks above should have proper syntax highlighting according to their 
 - **YAML block format** (Tests 2, 4, 7): Use `---` delimiters with `key:` without leading colon
 
 Both formats should work without breaking syntax highlighting.
+
+## 📦 Required Tree-sitter Parsers
+
+Syntax highlighting requires the corresponding tree-sitter parsers to be installed:
+
+- **Python** (Tests 1-3, 5-7): `:TSInstall python` ✅ (commonly pre-installed)
+- **Rust** (Test 4): `:TSInstall rust` ✅ (used in this test file)
+- **LaTeX** (Math tests 8-12): `:TSInstall latex` (required for math directives)
+
+**Other Supported Languages** (install as needed):
+```vim
+:TSInstall javascript bash r julia c cpp go typescript
+```
+
+**Note:** The plugin supports these languages via injection queries, but highlighting only works if you've installed the corresponding parser. If you don't see highlighting for a code-cell, install its parser with `:TSInstall <language>`.
 
 ## 📊 How to Test
 
