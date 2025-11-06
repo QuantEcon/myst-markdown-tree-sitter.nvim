@@ -1,0 +1,70 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        nvim-version:
+          - stable
+          - nightly
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Neovim
+        uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: ${{ matrix.nvim-version }}
+
+      - name: Install dependencies
+        run: |
+          mkdir -p ~/.local/share/nvim/site/pack/packer/start
+          cd ~/.local/share/nvim/site/pack/packer/start
+          
+          # Install plenary.nvim for testing
+          git clone --depth=1 https://github.com/nvim-lua/plenary.nvim.git
+          
+          # Install nvim-treesitter
+          git clone --depth=1 https://github.com/nvim-treesitter/nvim-treesitter.git
+
+      - name: Install Tree-sitter parsers
+        run: |
+          nvim --headless -c "TSInstallSync markdown markdown_inline python lua | quit"
+
+      - name: Run unit tests
+        run: make test-unit
+
+      - name: Run integration tests
+        run: make test-integration
+
+  lint:
+    name: Lint and Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install StyLua
+        uses: JohnnyMorganz/stylua-action@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: latest
+          args: --check lua/ plugin/ ftdetect/ ftplugin/ test/
+
+      - name: Install Luacheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y luarocks
+          sudo luarocks install luacheck
+
+      - name: Run Luacheck
+        run: make lint

@@ -10,6 +10,10 @@ This plugin provides syntax highlighting and filetype detection for [MyST (Marke
 - **Code-cell directive highlighting** with language-specific syntax highlighting for `{code-cell}` directives
 - **Tree-sitter integration** for robust parsing
 - **Markdown compatibility** - works alongside existing markdown features
+- **Modular architecture** with clean separation of concerns
+- **Comprehensive testing** with 55 tests (50 unit + 5 integration)
+- **Vim help documentation** - Access via `:help myst-markdown`
+- **Configuration examples** - See `examples/` directory for common use cases
 
 ## Installation
 
@@ -82,14 +86,40 @@ To test unreleased changes from a specific branch (useful for testing fixes befo
 
 The plugin automatically detects MyST markdown files based on content patterns and applies appropriate syntax highlighting.
 
+### Configuration
+
+The plugin provides sensible defaults, but you can customize behavior:
+
+```lua
+require('myst-markdown').setup({
+  -- Filetype detection settings
+  detection = {
+    scan_lines = 50,  -- Number of lines to scan for MyST patterns
+  },
+  
+  -- Performance settings
+  performance = {
+    defer_timeout = 50,     -- ms to defer highlighting setup
+    refresh_wait = 100,     -- ms to wait during refresh
+    cache_enabled = true,   -- Enable detection caching
+  },
+  
+  -- Highlighting settings
+  highlighting = {
+    enabled = true,
+  },
+})
+```
+
 ### Manual Commands
 
-For debugging and manual control, the plugin provides these commands:
+For debugging and information, the plugin provides these commands:
 
-- `:MystDebug` - Show debugging information about MyST state and tree-sitter queries
+- `:MystDebug` - Show comprehensive debugging information about MyST state and tree-sitter queries
 - `:MystStatus` - Quick health check of MyST highlighting status
+- `:MystInfo` - Show plugin version and configuration information
 
-These commands are useful for debugging highlighting issues and testing MyST functionality.
+These commands are useful for debugging highlighting issues and verifying MyST functionality.
 
 ### Code Cells
 
@@ -148,9 +178,76 @@ If MyST highlighting is not working:
 3. Ensure the file contains MyST directives like `{code-cell}`
 4. Verify nvim-treesitter is installed and markdown parser is available
 
+## Documentation
+
+### Vim Help
+
+Comprehensive documentation is available via Vim's built-in help system:
+
+```vim
+:help myst-markdown
+:help myst-markdown-commands
+:help myst-markdown-configuration
+:help myst-markdown-troubleshooting
+```
+
+### Configuration Examples
+
+The `examples/` directory contains ready-to-use configurations for common scenarios:
+
+- **[basic.lua](examples/basic.lua)** - Minimal setup (recommended starting point)
+- **[advanced.lua](examples/advanced.lua)** - Full configuration with all options and custom keymaps
+- **[performance.lua](examples/performance.lua)** - Optimized settings for large files
+- **[jupyter.lua](examples/jupyter.lua)** - Jupyter notebook integration with code execution
+- **[lazy-nvim.lua](examples/lazy-nvim.lua)** - Complete lazy.nvim plugin specification
+- **[with-lsp.lua](examples/with-lsp.lua)** - Integration with LSP, linters, and formatters
+
+Copy any example to your config and adjust as needed.
+
 ## Testing
 
-A sample MyST file is provided in `test/sample.md` for testing the plugin functionality.
+The plugin includes comprehensive test coverage with **55 tests** (50 unit + 5 integration):
+
+**Test Categories:**
+- **Unit tests** - Pattern matching, configuration, utilities
+- **Integration tests** - Filetype detection, tree-sitter query loading
+- **Edge cases** - Unicode, malformed syntax, boundary conditions
+- **Performance tests** - Large files (100+ code cells), caching efficiency
+
+**Run tests locally:**
+
+```bash
+make test              # Run all tests
+make test-unit         # Unit tests only
+make test-integration  # Integration tests only
+```
+
+**Test fixtures** are available in `test/fixtures/` for manual verification.
+
+**Testing philosophy:** We focus on state verification and API testing rather than visual verification. Tests validate that:
+- MyST patterns are correctly detected
+- Filetype is properly set based on content
+- Tree-sitter queries load and inject languages correctly
+- Configuration options work as expected
+- Edge cases are handled gracefully
+
+See individual test files in `test/unit/` and `test/integration/` for examples.
+
+## Development
+
+### Setting Up Development Environment
+
+Install development tools:
+
+```bash
+make install-dev-tools  # Installs StyLua and Luacheck
+```
+
+### Code Quality Tools
+
+- **Format code:** `make format` (uses StyLua)
+- **Lint code:** `make lint` (uses Luacheck)
+- **Check formatting:** `make check-format`
 
 ## Contributing
 

@@ -1,0 +1,310 @@
+*myst-markdown.txt*  MyST Markdown plugin with tree-sitter support
+
+==============================================================================
+CONTENTS                                            *myst-markdown-contents*
+
+    1. Introduction ..................... |myst-markdown-introduction|
+    2. Requirements ..................... |myst-markdown-requirements|
+    3. Installation ..................... |myst-markdown-installation|
+    4. Configuration .................... |myst-markdown-configuration|
+    5. Commands ......................... |myst-markdown-commands|
+    6. Usage ............................ |myst-markdown-usage|
+    7. Supported Languages .............. |myst-markdown-languages|
+    8. Troubleshooting .................. |myst-markdown-troubleshooting|
+    9. Contributing ..................... |myst-markdown-contributing|
+    10. License ......................... |myst-markdown-license|
+
+==============================================================================
+1. INTRODUCTION                                 *myst-markdown-introduction*
+
+myst-markdown-tree-sitter.nvim is a Neovim plugin that provides syntax
+highlighting and filetype detection for MyST (Markedly Structured Text)
+markdown files.
+
+MyST is an extended markdown syntax that adds powerful features like
+directives and roles. This plugin extends standard markdown highlighting
+with MyST-specific features, particularly `{code-cell}` directives.
+
+Features:
+  • Automatic filetype detection for MyST markdown files
+  • Code-cell directive highlighting with language-specific syntax
+  • Tree-sitter integration for robust parsing
+  • Markdown compatibility - works alongside existing markdown features
+  • Configurable detection and performance settings
+
+Repository: https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim
+MyST Documentation: https://mystmd.org/
+
+==============================================================================
+2. REQUIREMENTS                                 *myst-markdown-requirements*
+
+- Neovim >= 0.8.0
+- nvim-treesitter (https://github.com/nvim-treesitter/nvim-treesitter)
+- Tree-sitter markdown parser
+
+To install the markdown parser:
+>
+    :TSInstall markdown markdown_inline
+<
+
+==============================================================================
+3. INSTALLATION                                 *myst-markdown-installation*
+
+Using lazy.nvim ~
+>lua
+    {
+      'QuantEcon/myst-markdown-tree-sitter.nvim',
+      dependencies = {'nvim-treesitter/nvim-treesitter'},
+      ft = {"markdown", "myst"},
+      config = function()
+        require('myst-markdown').setup()
+      end,
+      priority = 1000,
+    }
+<
+
+Using packer.nvim ~
+>lua
+    use {
+      'QuantEcon/myst-markdown-tree-sitter.nvim',
+      requires = {'nvim-treesitter/nvim-treesitter'},
+      config = function()
+        require('myst-markdown').setup()
+      end
+    }
+<
+
+Using vim-plug ~
+>vim
+    Plug 'nvim-treesitter/nvim-treesitter'
+    Plug 'QuantEcon/myst-markdown-tree-sitter.nvim'
+<
+
+After installation with vim-plug, add to your init.lua:
+>lua
+    require('myst-markdown').setup()
+<
+
+==============================================================================
+4. CONFIGURATION                                *myst-markdown-configuration*
+
+                                                *myst-markdown.setup()*
+setup({config})
+    Configure the myst-markdown plugin. All settings are optional.
+
+    Parameters: ~
+        {config} (table) Configuration options
+
+    Configuration options: ~
+        {detection} (table) Filetype detection settings
+            {scan_lines} (number) Number of lines to scan for MyST
+                         patterns. Default: 50
+
+        {performance} (table) Performance settings
+            {defer_timeout} (number) Milliseconds to defer highlighting
+                            setup. Default: 50
+            {refresh_wait} (number) Milliseconds to wait during refresh.
+                           Default: 100
+            {cache_enabled} (boolean) Enable detection caching.
+                            Default: true
+
+        {highlighting} (table) Highlighting settings
+            {enabled} (boolean) Enable MyST highlighting.
+                      Default: true
+
+Example configuration with defaults: ~
+>lua
+    require('myst-markdown').setup({
+      detection = {
+        scan_lines = 50,
+      },
+      performance = {
+        defer_timeout = 50,
+        refresh_wait = 100,
+        cache_enabled = true,
+      },
+      highlighting = {
+        enabled = true,
+      },
+    })
+<
+
+Minimal configuration (uses all defaults): ~
+>lua
+    require('myst-markdown').setup()
+<
+
+==============================================================================
+5. COMMANDS                                         *myst-markdown-commands*
+
+                                                    *:MystInfo*
+:MystInfo
+    Display plugin information including version and configuration
+    settings. Useful for verifying the plugin is loaded correctly.
+
+                                                    *:MystStatus*
+:MystStatus
+    Quick health check of MyST highlighting status for the current
+    buffer. Shows:
+    - Whether current buffer is a MyST file
+    - Tree-sitter parser status
+    - Highlighting state
+
+                                                    *:MystDebug*
+:MystDebug
+    Comprehensive debugging information including:
+    - Plugin version and configuration
+    - Current buffer filetype and parser
+    - Tree-sitter query availability
+    - Available tree-sitter languages
+    - Detection cache status
+    - Diagnostic suggestions if issues are found
+
+    Use this command when troubleshooting highlighting issues.
+
+==============================================================================
+6. USAGE                                               *myst-markdown-usage*
+
+The plugin automatically detects MyST markdown files based on content
+patterns and applies appropriate syntax highlighting.
+
+MyST Code-Cell Directives ~
+
+MyST code-cell directives provide executable code blocks:
+
+>markdown
+    ```{code-cell} python
+    import pandas as pd
+    df = pd.DataFrame({'a': [1, 2, 3]})
+    print(df)
+    ```
+<
+
+The language specified in the directive (e.g., `python`) determines the
+syntax highlighting applied to the code block content.
+
+Other MyST Directives ~
+
+The plugin detects various MyST directives:
+- `{code-cell}` - Executable code cells
+- `{note}` - Note admonitions
+- `{warning}` - Warning admonitions
+- And other MyST-specific syntax
+
+Filetype Detection ~
+
+Files are automatically detected as MyST (`filetype=myst`) when they
+contain MyST-specific syntax. Regular markdown files remain as
+`filetype=markdown`.
+
+The detection scans the first N lines (configurable via `scan_lines`)
+looking for MyST patterns. Detection results are cached for performance.
+
+==============================================================================
+7. SUPPORTED LANGUAGES                             *myst-markdown-languages*
+
+The following languages are supported in `{code-cell}` directives:
+
+  • Python (python, ipython)
+  • JavaScript (javascript, js)
+  • TypeScript (typescript, ts)
+  • Bash (bash, sh)
+  • R (r)
+  • Julia (julia)
+  • C (c)
+  • C++ (cpp, c++)
+  • Rust (rust)
+  • Go (go)
+
+For other languages, ensure the corresponding tree-sitter parser is
+installed:
+>
+    :TSInstall <language>
+<
+
+To see all available parsers:
+>
+    :TSInstallInfo
+<
+
+==============================================================================
+8. TROUBLESHOOTING                             *myst-markdown-troubleshooting*
+
+MyST highlighting not working ~
+
+1. Run |:MystStatus| for a quick health check
+2. Run |:MystDebug| for detailed diagnostics
+3. Verify the file contains MyST directives like `{code-cell}`
+4. Ensure nvim-treesitter is installed and configured
+5. Check markdown parser is installed: `:TSInstall markdown`
+
+Performance issues ~
+
+If experiencing slow file opening or editing:
+
+1. Reduce `scan_lines` in configuration:
+>lua
+    require('myst-markdown').setup({
+      detection = {
+        scan_lines = 25,  -- Scan fewer lines
+      },
+    })
+<
+
+2. Ensure `cache_enabled = true` (default)
+3. Run |:MystDebug| to check for issues
+
+No syntax highlighting in code cells ~
+
+1. Verify the language parser is installed:
+>
+    :TSInstall python  -- or your language
+<
+
+2. Check available parsers: `:TSInstallInfo`
+3. Ensure the language is specified correctly in the directive:
+>markdown
+    ```{code-cell} python
+    # code here
+    ```
+<
+
+Conflicts with other markdown plugins ~
+
+If experiencing conflicts:
+
+1. Set `priority = 1000` in lazy.nvim config to load after other plugins
+2. Ensure myst-markdown is loaded after other markdown-related plugins
+3. Check for duplicate filetype detections in other plugins
+
+Getting help ~
+
+1. Run |:MystDebug| and include output in issue reports
+2. Check existing issues: https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/issues
+3. Create a new issue with:
+   - Neovim version (`:version`)
+   - Plugin configuration
+   - Output of |:MystDebug|
+   - Minimal reproducible example
+
+==============================================================================
+9. CONTRIBUTING                                 *myst-markdown-contributing*
+
+Contributions are welcome! Please see:
+https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim
+
+Before contributing:
+1. Ensure tests pass: `make test`
+2. Follow existing code style (enforced by stylua)
+3. Update documentation as needed
+4. Add tests for new features
+
+==============================================================================
+10. LICENSE                                         *myst-markdown-license*
+
+MIT License
+
+Copyright (c) 2024-2025 QuantEcon
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:
