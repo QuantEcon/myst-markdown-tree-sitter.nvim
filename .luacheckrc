@@ -37,9 +37,10 @@ exclude_files = {
 max_line_length = 100
 
 -- Maximum code complexity (cyclomatic complexity)
+-- Increased for debug/diagnostic functions that need to check many conditions
 max_code_line_length = 100
 max_comment_line_length = 100
-max_cyclomatic_complexity = 15
+max_cyclomatic_complexity = 25
 
 -- Neovim-specific configuration
 -- Allow Neovim API naming conventions

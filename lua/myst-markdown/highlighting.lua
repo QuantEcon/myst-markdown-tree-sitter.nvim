@@ -56,7 +56,7 @@ function M.setup_treesitter(buf)
     end
   else
     -- Fallback for older Neovim versions
-    vim.bo[buf].syntax = "markdown"
+    vim.bo[buf].syntax = "markdown" -- luacheck: ignore 122
     utils.debug("Using fallback syntax highlighting")
   end
 

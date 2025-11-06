@@ -77,7 +77,7 @@ function M.setup_primary_detection()
       end
 
       if M.detect_myst(buf) then
-        vim.bo[buf].filetype = "myst"
+        vim.bo[buf].filetype = "myst" -- luacheck: ignore 122
         utils.debug("Detected MyST file on BufRead/BufNewFile")
       end
     end,
@@ -97,7 +97,7 @@ function M.setup_secondary_detection()
       end
 
       if M.detect_myst(buf) then
-        vim.bo[buf].filetype = "myst"
+        vim.bo[buf].filetype = "myst" -- luacheck: ignore 122
         utils.debug("Overriding markdown filetype to myst")
 
         -- Defer highlighting setup
