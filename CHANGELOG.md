@@ -7,11 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2025-11-07
+
 ### Added
-- LaTeX syntax highlighting for `{math}` directives
+- **LaTeX syntax highlighting for `{math}` directives** - Major new feature
 - Support for `{math}` directives with YAML configuration (`:label:`, `:nowrap:`, etc.)
-- Test suite for math directive support (6 new tests)
+- Test suite for math directive support (6 new tests, total: 82 tests)
 - Test fixture `test/fixtures/math_directive.md` demonstrating various math formats
+- Test fixture `test/fixtures/yaml_syntax_formats.md` showing both MyST config formats
+- Documentation for both concise and YAML block configuration formats
+- Comprehensive examples in `VISUAL_TEST.md` for both config formats
+
+### Changed
+- Reorganized `VISUAL_TEST.md` to clearly demonstrate both MyST configuration syntaxes
+  - Concise format: `:tags: [value]`, `:linenos:` (with colons)
+  - YAML block format: `tags: [value]`, `linenos: true` (without leading colons, in `---` blocks)
+- Updated README.md with math directive documentation and examples
+- Improved documentation clarity around MyST YAML syntax formats
+
+### Fixed
+- Corrected YAML block syntax examples to use proper MyST format
+- Fixed inconsistencies between test titles and actual syntax used
 
 ## [0.2.1] - 2025-11-07
 
