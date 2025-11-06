@@ -143,13 +143,19 @@ Syntax highlighting requires the corresponding tree-sitter parsers to be install
 \int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
 ```
 
-**Comparison - Same equation with standard $$ delimiters:**
+**Comparison - Regular latex code block (should have identical highlighting):**
+
+```latex
+\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
+```
+
+**Comparison - Standard $$ delimiters (may have less highlighting):**
 
 $$
 \int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
 $$
 
-**Expected:** Both should show LaTeX syntax highlighting (commands like `\int`, `\sqrt`, subscripts, superscripts highlighted).
+**Expected:** The `{math}` block should match the ```` ```latex ```` block highlighting.
 
 ### Test 9: {math} directive with label
 
@@ -257,6 +263,14 @@ $$
 - The configuration lines (`label:`, `nowrap:`, etc.) are part of the YAML block and won't be highlighted as LaTeX
 
 **Comparison Test:** 
-The `{math}` directive examples should have **identical highlighting** to their corresponding `$$` delimiter versions below them. If the `$$` version is highlighted but the `{math}` version isn't, the LaTeX parser may not be installed.
+The `{math}` directive should inject LaTeX syntax highlighting similar to a standard ```` ```latex ```` code block.
+
+**Important Note About `$$` Delimiters:**
+Standard `$$` math blocks in markdown don't automatically get LaTeX syntax highlighting from tree-sitter - they're treated as inline math by the markdown parser. The comparison here shows the difference between MyST's `{math}` directive (which uses LaTeX injection) and standard markdown math delimiters.
+
+**To verify LaTeX highlighting is working:**
+1. Check if a regular ```` ```latex ```` code block shows LaTeX highlighting
+2. The `{math}` directive should show similar highlighting to ```` ```latex ````
+3. Standard `$$` blocks may show less/different highlighting (this is expected)
 
 **Note:** LaTeX highlighting requires the tree-sitter latex parser to be installed: `:TSInstall latex`
