@@ -8,10 +8,11 @@ This plugin provides syntax highlighting and filetype detection for [MyST (Marke
 
 - **Automatic filetype detection** for MyST markdown files
 - **Code-cell directive highlighting** with language-specific syntax highlighting for `{code-cell}` directives
+- **Math directive highlighting** with LaTeX syntax highlighting for `{math}` directives
 - **Tree-sitter integration** for robust parsing
 - **Markdown compatibility** - works alongside existing markdown features
 - **Modular architecture** with clean separation of concerns
-- **Comprehensive testing** with 55 tests (50 unit + 5 integration)
+- **Comprehensive testing** with 82+ tests covering directives, edge cases, and performance
 - **Vim help documentation** - Access via `:help myst-markdown`
 - **Configuration examples** - See `examples/` directory for common use cases
 
@@ -153,6 +154,23 @@ For other languages, ensure you have the corresponding tree-sitter parser instal
 ### MyST Code-Cell Directives
 
 The plugin provides syntax highlighting for MyST `{code-cell}` directives with language-specific syntax highlighting support.
+
+### MyST Math Directives
+
+The plugin provides LaTeX syntax highlighting for MyST `{math}` directives:
+
+```markdown
+```{math}
+:label: eq_name
+
+\begin{aligned}
+    y_1 &= a_{11} x_1 + a_{12} x_2 \\
+    y_2 &= a_{21} x_1 + a_{22} x_2
+\end{aligned}
+` ``
+```
+
+Math directives support YAML configuration options like `:label:`, `:nowrap:`, etc., just like code-cell directives.
 
 ## Configuration
 

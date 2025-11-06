@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- LaTeX syntax highlighting for `{math}` directives
+- Support for `{math}` directives with YAML configuration (`:label:`, `:nowrap:`, etc.)
+- Test suite for math directive support (6 new tests)
+- Test fixture `test/fixtures/math_directive.md` demonstrating various math formats
+
 ## [0.2.1] - 2025-11-07
 
 ### Fixed

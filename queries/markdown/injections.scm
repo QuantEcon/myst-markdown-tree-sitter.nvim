@@ -75,6 +75,16 @@
   (#match? @_lang "^\\{code-cell\\}\\s+(typescript|ts)")
   (#set! injection.language "typescript"))
 
+;; MyST math directive injection
+;; Inject LaTeX parser into {math} blocks for proper math syntax highlighting
+;; Supports both simple and YAML-configured math directives
+;; Example: ```{math} or ```{math}\n:label: eq_name
+((fenced_code_block
+  (info_string) @_lang
+  (code_fence_content) @injection.content)
+  (#match? @_lang "^\\{math\\}")
+  (#set! injection.language "latex"))
+
 
 
 
