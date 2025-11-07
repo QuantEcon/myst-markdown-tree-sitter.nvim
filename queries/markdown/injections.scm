@@ -76,14 +76,13 @@
   (#set! injection.language "typescript"))
 
 ;; MyST math directive injection
-;; Inject markdown_inline parser into {math} blocks to match $$ delimiter behavior
-;; This ensures consistent highlighting between {math} directives and $$ blocks in MyST
-;; The markdown_inline parser handles LaTeX math highlighting
+;; Inject LaTeX parser into {math} blocks to match $$ delimiter behavior
+;; The markdown parser automatically injects LaTeX into $$ blocks, so we do the same for {math}
 ((fenced_code_block
   (info_string) @_lang
   (code_fence_content) @injection.content)
   (#match? @_lang "^\\{math\\}")
-  (#set! injection.language "markdown_inline"))
+  (#set! injection.language "latex"))
 
 
 
