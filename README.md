@@ -222,6 +222,10 @@ If MyST highlighting is not working:
 :TSInstallInfo
 ```
 
+### Known Limitations
+
+- **Inline roles** (e.g., `{math}\`a^2 + b^2\``) are not currently supported. Only block directives like ` ```{math} ` have syntax highlighting.
+
 ## Documentation
 
 ### Vim Help
