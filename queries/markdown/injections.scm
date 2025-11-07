@@ -76,14 +76,14 @@
   (#set! injection.language "typescript"))
 
 ;; MyST math directive injection
-;; Inject LaTeX parser into {math} blocks for proper math syntax highlighting
-;; Supports both simple and YAML-configured math directives
-;; Example: ```{math} or ```{math}\n:label: eq_name
+;; Inject markdown_inline parser into {math} blocks to match $$ delimiter behavior
+;; This ensures consistent highlighting between {math} directives and $$ blocks in MyST
+;; The markdown_inline parser handles LaTeX math highlighting
 ((fenced_code_block
   (info_string) @_lang
   (code_fence_content) @injection.content)
   (#match? @_lang "^\\{math\\}")
-  (#set! injection.language "latex"))
+  (#set! injection.language "markdown_inline"))
 
 
 
