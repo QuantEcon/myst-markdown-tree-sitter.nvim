@@ -1,0 +1,46 @@
+% Simple LaTeX Test File
+% Open this file in Neovim to test if LaTeX syntax highlighting works
+
+\documentclass{article}
+\usepackage{amsmath}
+
+\begin{document}
+
+\section{Introduction}
+
+This is a test of LaTeX syntax highlighting.
+
+\subsection{Math Examples}
+
+Inline math: $E = mc^2$
+
+Display math:
+$$
+\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
+$$
+
+Equation environment:
+\begin{equation}
+    x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+\end{equation}
+
+Matrix:
+\begin{equation}
+    \mathbf{A} = 
+    \begin{bmatrix}
+        a_{11} & a_{12} & \cdots & a_{1n} \\
+        a_{21} & a_{22} & \cdots & a_{2n} \\
+        \vdots & \vdots & \ddots & \vdots \\
+        a_{m1} & a_{m2} & \cdots & a_{mn}
+    \end{bmatrix}
+\end{equation}
+
+Aligned equations:
+\begin{align}
+    y_1 &= a_{11} x_1 + a_{12} x_2 + \cdots + a_{1k} x_k \\
+    y_2 &= a_{21} x_1 + a_{22} x_2 + \cdots + a_{2k} x_k \\
+    &\vdots \\
+    y_n &= a_{n1} x_1 + a_{n2} x_2 + \cdots + a_{nk} x_k
+\end{align}
+
+\end{document}

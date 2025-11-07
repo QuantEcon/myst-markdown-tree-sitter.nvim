@@ -10,7 +10,7 @@ local highlighting = require("myst-markdown.highlighting")
 local commands = require("myst-markdown.commands")
 
 --- Plugin version
-M.version = "0.3.0"
+M.version = "0.3.1"
 
 --- Setup function for the MyST markdown plugin
 ---@param opts table|nil User configuration options

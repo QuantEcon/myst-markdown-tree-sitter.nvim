@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2025-11-07
+
+### Fixed
+- **Consistent LaTeX highlighting**: `{math}` directives now use the same `markdown_inline` parser as `$$` blocks
+  - Previously, `{math}` used the `latex` parser while `$$` used `markdown_inline`, causing inconsistent colors
+  - Now both use `markdown_inline` for uniform LaTeX math highlighting throughout MyST documents
+  - Addresses distracting color differences for identical LaTeX equations
+
+### Changed
+- Updated documentation to clarify tree-sitter parser requirements for language highlighting
+- Reorganized VISUAL_TEST.md to demonstrate both concise and YAML block configuration formats
+- Added comparison examples between `{math}`, ```` ```latex ````, and `$$` delimiters
+- Clarified realistic expectations for LaTeX math highlighting in documentation
+
+### Added
+- Test file `test_latex_highlighting.tex` for verifying LaTeX parser functionality
+- Enhanced troubleshooting section in README with parser installation guidance
+- Comprehensive "Supported Languages" section listing all 10 supported code-cell languages
+
 ## [0.3.0] - 2025-11-07
 
 ### Added
