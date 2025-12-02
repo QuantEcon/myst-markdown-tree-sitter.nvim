@@ -5,7 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.4.0] - 2025-12-02
+
+### Added
+- **Single source of truth for version management** - Version now defined in `lua/myst-markdown/version.lua`
+  - Prevents version drift between modules
+  - Both `init.lua` and `commands.lua` now reference this single source
+- **Comprehensive integration tests** - Added 4 new integration test files (33 new tests):
+  - `test/integration/version_spec.lua` - Version consistency tests
+  - `test/integration/commands_spec.lua` - User command tests
+  - `test/integration/highlighting_spec.lua` - Tree-sitter highlighting tests
+  - `test/integration/setup_spec.lua` - Plugin setup and module loading tests
+- Total test count increased from 77 to 110 tests
+
+### Changed
+- **Simplified filetype detection** - Consolidated to use `vim.filetype.add()` API in ftdetect
+- **Reduced logging verbosity** - Changed startup logging from INFO to DEBUG level
+- **Cleaned up test directory** - Moved 47 legacy test files to `test/legacy/` with explanatory README
+- Moved `VISUAL_TEST.md` back to root level for easy manual testing access
+
+### Removed
+- **Dead code cleanup**:
+  - Removed unused `refresh_highlighting()` call from ftdetect/myst.lua
+  - Removed unused functions from utils.lua: `cache_*`, `defer`, `wait`, `get_parser`
+  - Removed duplicate filetype detection autocmd (now uses single `vim.filetype.add()`)
+- Deleted `REFACTORING_SUMMARY.md` (per project guidelines)
+- Removed `test_latex_highlighting.tex` from root (moved to legacy)
+
+### Fixed
+- **Version consistency** - commands.lua now references `version.lua` instead of hardcoded value
+- **CHANGELOG links** - Updated version comparison links to be accurate
 
 ## [0.3.2] - 2025-11-07
 
@@ -143,7 +172,11 @@ This release represents a complete overhaul of the plugin architecture, testing 
 - MystRefresh activation enhancement (Issue #54)
 - Various highlighting and injection query fixes
 
-[Unreleased]: https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/compare/v0.3.2...v0.4.0
+[0.3.2]: https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/compare/v0.3.1...v0.3.2
+[0.3.1]: https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/releases/tag/v0.1.0

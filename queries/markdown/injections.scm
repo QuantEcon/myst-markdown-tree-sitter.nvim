@@ -84,10 +84,6 @@
   (#match? @_lang "^\\{math\\}")
   (#set! injection.language "latex"))
 
-
-
-
-
 ;; Standard markdown language injection (preserve existing behavior)
 ;; This handles regular markdown code blocks like ```python
 ;; Must match the official tree-sitter-markdown pattern

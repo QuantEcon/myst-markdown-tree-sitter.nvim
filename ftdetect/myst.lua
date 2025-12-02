@@ -1,58 +1,23 @@
 -- Filetype detection for MyST markdown files
--- Auto-detect MyST markdown files based on code-cell directives
+-- This file is loaded automatically by Neovim before plugins.
+-- We use vim.filetype.add() for early detection, then the main plugin
+-- setup() adds additional autocmds with caching support.
 
--- Primary detection on file read
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  pattern = "*.md",
-  callback = function()
-    local lines = vim.api.nvim_buf_get_lines(0, 0, 50, false) -- Check first 50 lines
-    local is_myst = false
-
-    for _, line in ipairs(lines) do
-      -- Check for various MyST directives
-      if
-        line:match("^```{code%-cell}") -- Code-cell directive (supported)
-        -- Other MyST directives like {raw}, {note}, etc. (detected but not highlighted)
-        or line:match("^```{[%w%-_]+}")
-        -- Standalone MyST directives (detected but not highlighted)
-        or line:match("^{[%w%-_]+}")
-      then
-        is_myst = true
-        break
+vim.filetype.add({
+  extension = {
+    md = function(path, bufnr)
+      -- Check first 50 lines for MyST patterns
+      local lines = vim.api.nvim_buf_get_lines(bufnr, 0, 50, false)
+      for _, line in ipairs(lines) do
+        if
+          line:match("^```{code%-cell}")
+          or line:match("^```{[%w%-_]+}")
+          or line:match("^{[%w%-_]+}")
+        then
+          return "myst"
+        end
       end
-    end
-
-    if is_myst then
-      vim.bo.filetype = "myst"
-    end
-  end,
-})
-
--- Secondary detection to override markdown filetype if MyST content is detected
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "markdown",
-  callback = function()
-    local lines = vim.api.nvim_buf_get_lines(0, 0, 50, false) -- Check first 50 lines
-
-    for _, line in ipairs(lines) do
-      -- Check for various MyST directives
-      if
-        line:match("^```{code%-cell}") -- Code-cell directive (supported)
-        -- Other MyST directives like {raw}, {note}, etc. (detected but not highlighted)
-        or line:match("^```{[%w%-_]+}")
-        -- Standalone MyST directives (detected but not highlighted)
-        or line:match("^{[%w%-_]+}")
-      then
-        vim.bo.filetype = "myst"
-        -- Simple refresh without complex timing
-        vim.defer_fn(function()
-          local ok, myst = pcall(require, "myst-markdown")
-          if ok and myst.refresh_highlighting then
-            myst.refresh_highlighting()
-          end
-        end, 50)
-        break
-      end
-    end
-  end,
+      return "markdown"
+    end,
+  },
 })

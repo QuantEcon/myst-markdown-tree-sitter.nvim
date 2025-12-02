@@ -2,6 +2,7 @@
 local M = {}
 local utils = require("myst-markdown.utils")
 local config = require("myst-markdown.config")
+local version = require("myst-markdown.version")
 
 --- Show comprehensive MyST debugging information
 function M.debug_myst()
@@ -155,7 +156,7 @@ end
 --- Show plugin information
 function M.info()
   print("=== MyST Markdown Plugin ===")
-  print("Version: 0.2.0")
+  print("Version: " .. version)
   print("Neovim version: " .. vim.fn.execute("version"):match("NVIM v([%d.]+)"))
   print("Tree-sitter available: " .. tostring(utils.has_treesitter()))
   print("Markdown parser available: " .. tostring(utils.has_parser("markdown")))

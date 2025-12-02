@@ -1,7 +1,6 @@
 --- Highlighting module for MyST Markdown
 local M = {}
 local utils = require("myst-markdown.utils")
-local config = require("myst-markdown.config")
 
 --- Setup highlight groups for MyST elements
 function M.setup_highlight_groups()

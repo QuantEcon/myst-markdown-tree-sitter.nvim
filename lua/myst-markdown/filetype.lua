@@ -1,4 +1,9 @@
 --- Filetype detection module for MyST Markdown
+--- Note: Primary filetype detection is in ftdetect/myst.lua which runs before plugins.
+--- This module provides:
+--- 1. A reusable detect_myst() function with caching
+--- 2. Secondary detection to override markdown filetype if another plugin sets it
+--- 3. Cache invalidation on buffer changes
 local M = {}
 local utils = require("myst-markdown.utils")
 local config = require("myst-markdown.config")
@@ -65,27 +70,8 @@ function M.clear_all_caches()
   detection_cache = {}
 end
 
---- Setup primary filetype detection on file read
-function M.setup_primary_detection()
-  vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-    pattern = "*.md",
-    callback = function(args)
-      local buf = args.buf
-
-      if not utils.is_valid_buffer(buf) then
-        return
-      end
-
-      if M.detect_myst(buf) then
-        vim.bo[buf].filetype = "myst" -- luacheck: ignore 122
-        utils.debug("Detected MyST file on BufRead/BufNewFile")
-      end
-    end,
-    desc = "Detect MyST markdown files on open",
-  })
-end
-
 --- Setup secondary filetype detection to override markdown filetype
+--- This handles cases where another plugin sets the filetype to markdown
 function M.setup_secondary_detection()
   vim.api.nvim_create_autocmd("FileType", {
     pattern = "markdown",
@@ -99,13 +85,6 @@ function M.setup_secondary_detection()
       if M.detect_myst(buf) then
         vim.bo[buf].filetype = "myst" -- luacheck: ignore 122
         utils.debug("Overriding markdown filetype to myst")
-
-        -- Defer highlighting setup
-        local defer_timeout = config.get_value("performance.defer_timeout") or 50
-        utils.defer(function()
-          local highlighting = require("myst-markdown.highlighting")
-          highlighting.setup()
-        end, defer_timeout)
       end
     end,
     desc = "Override markdown filetype if MyST content detected",
@@ -135,10 +114,10 @@ end
 
 --- Setup all filetype detection mechanisms
 function M.setup()
-  M.setup_primary_detection()
+  -- Note: Primary detection is handled by ftdetect/myst.lua using vim.filetype.add()
   M.setup_secondary_detection()
   M.setup_cache_invalidation()
-  utils.info("Filetype detection configured")
+  utils.debug("Filetype detection configured")
 end
 
 return M

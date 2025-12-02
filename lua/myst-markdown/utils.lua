@@ -89,24 +89,6 @@ function M.has_parser(lang)
   return parsers.has_parser(lang)
 end
 
---- Get the tree-sitter parser for a buffer
----@param buf number Buffer handle
----@param lang string|nil Language (defaults to buffer language)
----@return any|nil Parser or nil on error
-function M.get_parser(buf, lang)
-  if not M.is_valid_buffer(buf) then
-    return nil
-  end
-
-  local ok, parser = pcall(vim.treesitter.get_parser, buf, lang)
-  if not ok then
-    M.debug("Failed to get parser: " .. tostring(parser))
-    return nil
-  end
-
-  return parser
-end
-
 --- Check if Neovim version meets minimum requirement
 ---@param major number Major version
 ---@param minor number Minor version
@@ -115,49 +97,6 @@ end
 function M.check_version(major, minor, patch)
   patch = patch or 0
   return vim.fn.has(string.format("nvim-%d.%d.%d", major, minor, patch)) == 1
-end
-
---- Defer a function call
----@param fn function Function to call
----@param timeout number Timeout in milliseconds
-function M.defer(fn, timeout)
-  vim.defer_fn(fn, timeout)
-end
-
---- Wait synchronously
----@param timeout number Timeout in milliseconds
-function M.wait(timeout)
-  vim.wait(timeout, function()
-    return false
-  end)
-end
-
---- Cache implementation for detection results
-M.cache = {}
-
---- Set a cache value
----@param key any Cache key
----@param value any Value to cache
-function M.cache_set(key, value)
-  M.cache[key] = value
-end
-
---- Get a cache value
----@param key any Cache key
----@return any|nil Cached value or nil
-function M.cache_get(key)
-  return M.cache[key]
-end
-
---- Clear specific cache key
----@param key any Cache key
-function M.cache_clear(key)
-  M.cache[key] = nil
-end
-
---- Clear all cache
-function M.cache_clear_all()
-  M.cache = {}
 end
 
 --- Check if string matches any pattern in a list

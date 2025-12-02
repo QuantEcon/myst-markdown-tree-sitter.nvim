@@ -9,8 +9,8 @@ local filetype = require("myst-markdown.filetype")
 local highlighting = require("myst-markdown.highlighting")
 local commands = require("myst-markdown.commands")
 
---- Plugin version
-M.version = "0.3.2"
+--- Plugin version (single source of truth in version.lua)
+M.version = require("myst-markdown.version")
 
 --- Setup function for the MyST markdown plugin
 ---@param opts table|nil User configuration options
@@ -29,7 +29,7 @@ function M.setup(opts)
   end
 
   config.merge(opts)
-  utils.info("Configuration loaded")
+  utils.debug("Configuration loaded")
 
   -- Setup filetype detection
   filetype.setup()
@@ -40,7 +40,7 @@ function M.setup(opts)
   -- Setup user commands
   commands.setup()
 
-  utils.info("MyST Markdown plugin initialized (v" .. M.version .. ")")
+  utils.debug("MyST Markdown plugin initialized (v" .. M.version .. ")")
 end
 
 -- Export sub-modules for advanced use

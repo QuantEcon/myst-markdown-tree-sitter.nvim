@@ -12,7 +12,7 @@ This plugin provides syntax highlighting and filetype detection for [MyST (Marke
 - **Tree-sitter integration** for robust parsing
 - **Markdown compatibility** - works alongside existing markdown features
 - **Modular architecture** with clean separation of concerns
-- **Comprehensive testing** with 82+ tests covering directives, edge cases, and performance
+- **Comprehensive testing** with 110 tests covering directives, edge cases, and performance
 - **Vim help documentation** - Access via `:help myst-markdown`
 - **Configuration examples** - See `examples/` directory for common use cases
 
@@ -254,13 +254,11 @@ Copy any example to your config and adjust as needed.
 
 ## Testing
 
-The plugin includes comprehensive test coverage with **55 tests** (50 unit + 5 integration):
+The plugin includes comprehensive test coverage with **110 tests** (77 unit + 33 integration):
 
 **Test Categories:**
-- **Unit tests** - Pattern matching, configuration, utilities
-- **Integration tests** - Filetype detection, tree-sitter query loading
-- **Edge cases** - Unicode, malformed syntax, boundary conditions
-- **Performance tests** - Large files (100+ code cells), caching efficiency
+- **Unit tests** - Pattern detection, configuration, edge cases, performance
+- **Integration tests** - Filetype detection, tree-sitter integration, commands, version management
 
 **Run tests locally:**
 
