@@ -48,7 +48,10 @@ describe("highlighting integration", function()
         local lang = parsers.get_buf_lang(buf)
         -- The buffer lang might be 'myst' but parser used is 'markdown'
         -- This is expected behavior - the filetype is myst, parser is markdown
-        assert.is_true(lang == "markdown" or lang == "myst", "Buffer should use markdown or myst lang")
+        assert.is_true(
+          lang == "markdown" or lang == "myst",
+          "Buffer should use markdown or myst lang"
+        )
       end
     end)
   end)
