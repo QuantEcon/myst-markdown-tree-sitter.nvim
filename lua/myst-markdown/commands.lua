@@ -8,8 +8,12 @@ local version = require("myst-markdown.version")
 --- This uses multiple methods since nvim-treesitter internal state is unreliable
 local function check_ts_highlighting_active(buf)
   -- Method 1: Check if vim.treesitter has an active parser for this buffer
+  -- For myst filetype, we need to explicitly request the markdown parser
   local has_active_parser = false
-  local parser_ok, parser = pcall(vim.treesitter.get_parser, buf)
+  local filetype = vim.bo[buf].filetype
+  local lang = filetype == "myst" and "markdown" or filetype
+
+  local parser_ok, parser = pcall(vim.treesitter.get_parser, buf, lang)
   if parser_ok and parser then
     has_active_parser = true
   end
