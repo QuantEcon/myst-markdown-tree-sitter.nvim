@@ -36,6 +36,16 @@ describe("pattern detection", function()
       assert.is_true(detect_myst_patterns(lines))
     end)
 
+    it("should detect code-cell with python3", function()
+      local lines = { "```{code-cell} python3" }
+      assert.is_true(detect_myst_patterns(lines))
+    end)
+
+    it("should detect code-cell with ipython3", function()
+      local lines = { "```{code-cell} ipython3" }
+      assert.is_true(detect_myst_patterns(lines))
+    end)
+
     it("should detect code-cell with javascript", function()
       local lines = { "```{code-cell} javascript" }
       assert.is_true(detect_myst_patterns(lines))

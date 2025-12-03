@@ -205,7 +205,7 @@ looking for MyST patterns. Detection results are cached for performance.
 
 The following languages are supported in `{code-cell}` directives:
 
-  • Python (python, ipython)
+  • Python (python, python3, ipython, ipython3)
   • JavaScript (javascript, js)
   • TypeScript (typescript, ts)
   • Bash (bash, sh)

@@ -142,7 +142,7 @@ Will be highlighted with language-specific syntax highlighting, similar to stand
 The plugin provides injection queries for the following languages in `{code-cell}` directives:
 
 **Commonly Available:**
-- Python (`python`, `ipython`, `ipython3`) - Usually pre-installed ✅
+- Python (`python`, `python3`, `ipython`, `ipython3`) - Usually pre-installed ✅
 - LaTeX (for `{math}` directives) - Install with `:TSInstall latex`
 
 **Additional Languages** (require manual installation):

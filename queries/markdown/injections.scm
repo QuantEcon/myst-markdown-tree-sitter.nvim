@@ -4,12 +4,12 @@
 
 ;; MyST code-cell injection patterns (processed first)
 ;; Inject Python parser into code-cell python blocks
-;; Matches: {code-cell} python, {code-cell} ipython, {code-cell} ipython3
+;; Matches: {code-cell} python, {code-cell} python3, {code-cell} ipython, {code-cell} ipython3
 ;; With or without YAML config (---, :tags:, etc.)
 ((fenced_code_block
   (info_string) @_lang
   (code_fence_content) @injection.content)
-  (#match? @_lang "^\\{code-cell\\}\\s+(python|ipython|ipython3)")
+  (#match? @_lang "^\\{code-cell\\}\\s+(python|python3|ipython|ipython3)")
   (#set! injection.language "python"))
 
 ;; Inject JavaScript parser into code-cell javascript blocks  
