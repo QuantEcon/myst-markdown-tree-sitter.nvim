@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.2] - 2025-12-04
+
+### Changed
+- **Improved `:MystDebug` and `:MystStatus` output** - Fixed misleading "Tree-sitter highlighter: not active" message
+  - Now uses more reliable parser detection methods
+  - Shows clear status indicators (✓, ✗, ⚠) for highlighting state
+  - Explains that nvim-treesitter internal state can show false negatives
+  - Primary success indicator is now parser + injection queries loaded
+
 ## [0.4.1] - 2025-12-04
 
 ### Added

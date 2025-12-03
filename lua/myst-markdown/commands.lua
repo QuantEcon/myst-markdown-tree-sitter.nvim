@@ -4,6 +4,26 @@ local utils = require("myst-markdown.utils")
 local config = require("myst-markdown.config")
 local version = require("myst-markdown.version")
 
+--- Check if tree-sitter highlighting is actually working for a buffer
+--- This uses multiple methods since nvim-treesitter internal state is unreliable
+local function check_ts_highlighting_active(buf)
+  -- Method 1: Check if vim.treesitter has an active parser for this buffer
+  local has_active_parser = false
+  local parser_ok, parser = pcall(vim.treesitter.get_parser, buf)
+  if parser_ok and parser then
+    has_active_parser = true
+  end
+
+  -- Method 2: Check nvim-treesitter's internal state (not always reliable)
+  local nvim_ts_active = false
+  local ts_highlight_ok, ts_highlight = pcall(require, "nvim-treesitter.highlight")
+  if ts_highlight_ok and ts_highlight and ts_highlight.active and ts_highlight.active[buf] then
+    nvim_ts_active = true
+  end
+
+  return has_active_parser, nvim_ts_active
+end
+
 --- Show comprehensive MyST debugging information
 function M.debug_myst()
   local buf = vim.api.nvim_get_current_buf()
@@ -25,72 +45,53 @@ function M.debug_myst()
   -- Check if myst queries exist
   local myst_highlights = vim.treesitter.query.get("markdown", "highlights")
   local myst_injections = vim.treesitter.query.get("markdown", "injections")
-  print("Myst highlight queries loaded: " .. tostring(myst_highlights ~= nil))
-  print("Myst injection queries loaded: " .. tostring(myst_injections ~= nil))
+  print("Markdown highlight queries loaded: " .. tostring(myst_highlights ~= nil))
+  print("Markdown injection queries loaded: " .. tostring(myst_injections ~= nil))
 
-  -- Check tree-sitter highlighting status
-  local highlighter_info = "not active"
-  local highlighter_errors = {}
+  -- Check tree-sitter highlighting status using multiple methods
+  local has_active_parser, nvim_ts_active = check_ts_highlighting_active(buf)
 
-  if has_treesitter then
-    local ts_highlight_ok, ts_highlight = pcall(require, "nvim-treesitter.highlight")
-    if ts_highlight_ok and ts_highlight then
-      if ts_highlight.active then
-        local ts_highlighter = ts_highlight.active[buf]
-        if ts_highlighter then
-          highlighter_info = "active"
-          if ts_highlighter.tree then
-            highlighter_info = highlighter_info .. " (has tree)"
-          else
-            table.insert(highlighter_errors, "missing tree")
-          end
-          if ts_highlighter.parser then
-            highlighter_info = highlighter_info .. " (has parser)"
-          else
-            table.insert(highlighter_errors, "missing parser")
-          end
-        else
-          table.insert(highlighter_errors, "no highlighter instance for buffer")
-        end
-      else
-        table.insert(highlighter_errors, "ts_highlight.active is nil")
-      end
-    else
-      table.insert(highlighter_errors, "failed to load nvim-treesitter.highlight")
-    end
+  print("")
+  print("Highlighting Status:")
+  if has_active_parser then
+    print("  ✓ Tree-sitter parser active for buffer")
   else
-    table.insert(highlighter_errors, "nvim-treesitter not available")
+    print("  ✗ No tree-sitter parser for buffer")
   end
 
-  print("Tree-sitter highlighter: " .. highlighter_info)
+  if nvim_ts_active then
+    print("  ✓ nvim-treesitter highlighter registered")
+  else
+    print("  ⚠ nvim-treesitter internal state shows inactive")
+    print("    (This is often a false negative - highlighting may still work)")
+  end
 
-  if #highlighter_errors > 0 then
-    print("Highlighter issues: " .. table.concat(highlighter_errors, ", "))
-
-    -- Provide diagnostic suggestions
+  -- Overall assessment
+  if has_active_parser and myst_injections then
+    print("")
+    print("✓ Highlighting should be working (parser + injection queries loaded)")
+  elseif not has_active_parser then
+    print("")
+    print("✗ Highlighting NOT working - no active parser")
     print("\nDiagnostic suggestions:")
-    if filetype ~= "myst" then
-      print("  - File may not be detected as MyST. Check for MyST directives like {code-cell}")
-      print("  - Ensure file has .md extension and contains MyST content")
-    end
     print("  - Ensure nvim-treesitter is properly installed")
     print("  - Ensure markdown parser is installed with :TSInstall markdown")
+    print("  - Try reopening the file")
   end
 
   -- Check parser configs
   if has_treesitter then
     local parsers = require("nvim-treesitter.parsers")
-    local parser_config = parsers.get_parser_configs()
-    print("Parser configs available: " .. table.concat(vim.tbl_keys(parser_config), ", "))
 
     -- Check filetype mapping
     if parsers.filetype_to_parsername then
       local myst_parser = parsers.filetype_to_parsername.myst
-      print("MyST filetype mapped to parser: " .. tostring(myst_parser))
+      print("\nMyST filetype mapped to parser: " .. tostring(myst_parser))
     end
   end
 
   -- Check first few lines for MyST patterns
+  print("")
   local lines = utils.get_buf_lines(buf, 0, 10) or {}
   local has_myst_patterns = false
 
@@ -129,13 +130,14 @@ function M.status_myst()
     print("✗ File not detected as MyST")
   end
 
-  if has_treesitter then
-    local ts_highlight_ok, ts_highlight = pcall(require, "nvim-treesitter.highlight")
-    if ts_highlight_ok and ts_highlight and ts_highlight.active and ts_highlight.active[buf] then
-      print("✓ Tree-sitter highlighting active")
-    else
-      print("✗ Tree-sitter highlighting not active")
-    end
+  -- Check highlighting using reliable method
+  local has_active_parser, _ = check_ts_highlighting_active(buf)
+  local myst_injections = vim.treesitter.query.get("markdown", "injections")
+
+  if has_active_parser and myst_injections then
+    print("✓ Tree-sitter highlighting ready")
+  elseif has_treesitter then
+    print("⚠ Tree-sitter available but parser may not be active")
   else
     print("✗ nvim-treesitter not available")
   end
