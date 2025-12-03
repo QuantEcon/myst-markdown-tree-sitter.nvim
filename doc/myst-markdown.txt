@@ -96,6 +96,9 @@ setup({config})
         {config} (table) Configuration options
 
     Configuration options: ~
+        {debug} (boolean) Enable debug logging. Shows verbose
+                initialization messages. Default: false
+
         {detection} (table) Filetype detection settings
             {scan_lines} (number) Number of lines to scan for MyST
                          patterns. Default: 50
@@ -115,6 +118,7 @@ setup({config})
 Example configuration with defaults: ~
 >lua
     require('myst-markdown').setup({
+      debug = false,
       detection = {
         scan_lines = 50,
       },

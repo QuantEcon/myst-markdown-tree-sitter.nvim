@@ -4,6 +4,9 @@ local M = {}
 
 --- Default configuration
 M.defaults = {
+  -- Enable debug logging (shows verbose initialization messages)
+  debug = false,
+
   -- Filetype detection settings
   detection = {
     scan_lines = 50, -- Number of lines to scan for MyST patterns

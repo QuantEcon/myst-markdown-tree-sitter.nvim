@@ -35,10 +35,14 @@ function M.info(msg)
   M.log(msg, M.log_levels.INFO)
 end
 
---- Log a debug message
+--- Log a debug message (only shown when debug = true in config)
 ---@param msg string Debug message
 function M.debug(msg)
-  M.log(msg, M.log_levels.DEBUG)
+  -- Only show debug messages if debug mode is enabled
+  local config_ok, config = pcall(require, "myst-markdown.config")
+  if config_ok and config.get and config.get().debug then
+    M.log(msg, M.log_levels.DEBUG)
+  end
 end
 
 --- Check if a buffer is valid and loaded
