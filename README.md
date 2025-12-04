@@ -227,6 +227,20 @@ If MyST highlighting is not working:
 
 ### Known Limitations
 
+- **Colon fence notation not supported** - MyST supports both backtick fences (`` ``` ``) and colon fences (`:::`) for directives. This plugin only supports backtick fences because the underlying markdown tree-sitter parser doesn't recognize colon fence syntax. See [#51](https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/issues/51) for tracking a dedicated MyST parser.
+
+  ```markdown
+  <!-- ✅ Supported -->
+  ```{code-cell} python
+  print("hello")
+  ```
+
+  <!-- ❌ Not supported -->
+  :::{code-cell} python
+  print("hello")
+  :::
+  ```
+
 - **Inline roles** (e.g., `{math}\`a^2 + b^2\``) are not currently supported. Only block directives like ` ```{math} ` have syntax highlighting.
 
 ## Documentation
