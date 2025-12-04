@@ -20,21 +20,47 @@ This plugin provides syntax highlighting and filetype detection for [MyST (Marke
 
 ### Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
+**Basic setup:**
 ```lua
 {
   'QuantEcon/myst-markdown-tree-sitter.nvim',
   dependencies = {'nvim-treesitter/nvim-treesitter'},
   ft = {"markdown", "myst"},
   config = function()
-    -- Your MyST setup here
-    -- Ensure this runs after treesitter is loaded
     require('myst-markdown').setup()
   end,
   priority = 1000, -- Load after other markdown plugins
 }
 ```
 
+**Recommended setup (with version pinning and full configuration):**
+```lua
+{
+  "QuantEcon/myst-markdown-tree-sitter.nvim",
+  version = "0.4.4",  -- Pin to specific version for stability
+  dependencies = { "nvim-treesitter/nvim-treesitter" },
+  ft = { "markdown", "myst" },
+  config = function()
+    require('myst-markdown').setup({
+      debug = false,  -- Set true for troubleshooting
+      detection = {
+        scan_lines = 50,
+      },
+      performance = {
+        cache_enabled = true,
+      },
+      highlighting = {
+        enabled = true,
+        priority = 110,  -- Priority for highlight groups
+      },
+    })
+  end,
+  priority = 1000,
+}
+```
+
 **Configuration Options Explained:**
+- `version = "0.4.4"` - Pin to a specific release for stability, or use `version = "*"` for latest
 - `ft = {"markdown", "myst"}` - Lazy loads the plugin only when opening markdown or MyST files, improving startup performance
 - `priority = 1000` - Ensures this plugin loads after other markdown plugins to prevent highlighting conflicts
 - `config` function - Runs the setup after treesitter is properly loaded
