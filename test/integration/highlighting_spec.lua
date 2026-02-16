@@ -14,18 +14,15 @@ describe("highlighting integration", function()
 
   describe("parser mapping", function()
     it("should map myst filetype to markdown parser", function()
-      local has_ts = pcall(require, "nvim-treesitter.parsers")
-      if has_ts then
-        local parsers = require("nvim-treesitter.parsers")
-        -- After setup, myst should be mapped to markdown
-        if parsers.filetype_to_parsername then
-          assert.equals("markdown", parsers.filetype_to_parsername.myst)
-        else
-          -- In newer nvim-treesitter, this may be handled differently
-          -- Just check that we can get the parser for markdown
-          assert.is_true(true, "Parser mapping handled by nvim-treesitter")
-        end
-      end
+      -- Verify we can obtain a markdown parser for a myst-typed buffer
+      local buf = vim.api.nvim_create_buf(false, true)
+      vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "```{code-cell} python", "x=1", "```" })
+      vim.bo[buf].filetype = "myst"
+
+      local ok, parser = pcall(vim.treesitter.get_parser, buf, "markdown")
+      assert.is_true(ok, "Should get markdown parser for myst buffer")
+      assert.is_not_nil(parser)
+      vim.api.nvim_buf_delete(buf, { force = true })
     end)
   end)
 
@@ -40,26 +37,18 @@ describe("highlighting integration", function()
       -- Verify filetype is myst
       assert.equals("myst", vim.bo.filetype)
 
-      -- Check if tree-sitter is loaded for the buffer
-      local has_ts = pcall(require, "nvim-treesitter.parsers")
-      if has_ts then
-        local parsers = require("nvim-treesitter.parsers")
-        local buf = vim.api.nvim_get_current_buf()
-        local lang = parsers.get_buf_lang(buf)
-        -- The buffer lang might be 'myst' but parser used is 'markdown'
-        -- This is expected behavior - the filetype is myst, parser is markdown
-        assert.is_true(
-          lang == "markdown" or lang == "myst",
-          "Buffer should use markdown or myst lang"
-        )
-      end
+      -- Verify a markdown parser can be obtained for the current buffer
+      local buf = vim.api.nvim_get_current_buf()
+      local ok, parser = pcall(vim.treesitter.get_parser, buf, "markdown")
+      assert.is_true(ok, "Should get markdown parser for myst buffer")
+      assert.is_not_nil(parser)
     end)
   end)
 
   describe("injection queries", function()
     it("should load markdown injection queries", function()
-      local ok, query = pcall(vim.treesitter.query.get, "markdown", "injections")
-      assert.is_true(ok)
+      local utils = require("myst-markdown.utils")
+      local query = utils.ts_get_query("markdown", "injections")
       assert.is_not_nil(query)
     end)
   end)

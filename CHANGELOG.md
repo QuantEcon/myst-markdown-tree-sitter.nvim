@@ -5,6 +5,63 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [0.5.0] - 2026-02-17
+
+### Changed
+- **`setup()` is no longer called automatically** — `plugin/myst-markdown.lua` now only sets
+  the load guard. Users must call `require("myst-markdown").setup()` in their config (lazy.nvim
+  `config`, packer `config`, etc.). This prevents double-initialisation and lets users pass
+  options before any autocmds are created.
+- **`setup()` is now fully idempotent** — all autocmds use named augroups
+  (`MystMarkdownFiletype`, `MystMarkdownHighlighting`) so repeated calls safely replace rather
+  than duplicate autocmds.
+- **Modern Tree-sitter parser registration** — uses `vim.treesitter.language.register()` when
+  available (Neovim >= 0.9), falling back to the legacy `filetype_to_parsername` table.
+- **`utils.debug()` no longer calls `pcall(require)` on every invocation** — the debug flag is
+  propagated once during `setup()`, making hot-path logging zero-cost when disabled.
+- **`utils.is_valid_buffer()` now handles `buf == 0`** — the common "current buffer" alias is
+  resolved via the new `utils.resolve_buf()` helper instead of being rejected.
+- **`ftplugin/myst.lua` no longer forces `spell`, `foldmethod`, or `foldexpr`** — these are
+  user preferences and should not be overridden by a syntax plugin.
+- **`commands.lua` uses `utils.ts_get_query()` for version-safe query access** — handles the
+  rename from `vim.treesitter.query.get_query` (old) to `vim.treesitter.query.get` (Neovim 0.9+).
+- **`commands.lua` uses `vim.version()` instead of parsing `:version` output** for the Neovim
+  version string shown in `:MystInfo`.
+- **Improved config validation** — now validates `debug`, `detection.patterns`,
+  `performance.cache_enabled`, and `highlighting.enabled` in addition to the existing checks.
+
+### Removed
+- **Unused config options removed:**
+  - `languages` — the list was never consumed; injection languages are defined in
+    `queries/markdown/injections.scm`.
+  - `language_aliases` — same reason.
+  - `highlighting.priority` — was commented-out / never applied.
+  - `performance.defer_timeout` and `performance.refresh_wait` — were unused.
+- **`highlighting.setup()` function removed** — the entry point is
+  `highlighting.setup_filetype_autocmd()` which is called from `init.setup()`.
+
+### Added
+- **`utils.resolve_buf(buf)`** — resolves `0` → actual buffer number.
+- **`utils.ts_get_query(lang, name)`** — version-safe wrapper for tree-sitter query loading.
+- **`M.is_setup()`** on the main module — returns whether `setup()` has been called.
+- **New unit tests:**
+  - `test/unit/config_spec.lua` — tests `merge`, `get`, `get_value`, `validate`.
+  - `test/unit/utils_spec.lua` — tests `resolve_buf`, `is_valid_buffer`, `get_buf_lines`,
+    `matches_any`, `check_version`, `ts_get_query`, and logging functions.
+- **All existing unit tests rewritten** to exercise the real module functions instead of
+  redefining detection logic inline.
+
+### Fixed
+- **Autocmd duplication on repeated `setup()` calls** — all autocmds now use unique augroups
+  with `clear = true`.
+- **`buf == 0` rejected by `is_valid_buffer()`** — 0 is a valid Neovim alias for the current
+  buffer.
+- **Edge case test contained `assert.truthy(result or not result)`** which always passed — replaced
+  with a meaningful assertion.
+- **`config.get()` returned empty table before `setup()`** — now falls back to `defaults`.
+
 ## [0.4.4] - 2025-12-04
 
 ### Changed

@@ -9,6 +9,10 @@ M.log_levels = {
   DEBUG = vim.log.levels.DEBUG,
 }
 
+--- Internal flag set by init.lua when debug mode is enabled.
+--- Avoids repeated pcall(require) on every debug() call.
+M._debug_enabled = false
+
 --- Log a message with the plugin prefix
 ---@param msg string Message to log
 ---@param level number|nil Log level (default: INFO)
@@ -38,18 +42,31 @@ end
 --- Log a debug message (only shown when debug = true in config)
 ---@param msg string Debug message
 function M.debug(msg)
-  -- Only show debug messages if debug mode is enabled
-  local config_ok, config = pcall(require, "myst-markdown.config")
-  if config_ok and config.get and config.get().debug then
+  if M._debug_enabled then
     M.log(msg, M.log_levels.DEBUG)
   end
 end
 
+--- Resolve a buffer handle.
+--- Converts 0 (current buffer alias) to the real buffer number.
+---@param buf number Buffer handle (may be 0)
+---@return number Resolved buffer number
+function M.resolve_buf(buf)
+  if buf == 0 then
+    return vim.api.nvim_get_current_buf()
+  end
+  return buf
+end
+
 --- Check if a buffer is valid and loaded
----@param buf number Buffer handle
+---@param buf number Buffer handle (0 is accepted as current buffer)
 ---@return boolean Whether buffer is valid
 function M.is_valid_buffer(buf)
-  return buf and vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf)
+  if buf == nil then
+    return false
+  end
+  buf = M.resolve_buf(buf)
+  return vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf)
 end
 
 --- Safely get buffer lines
@@ -61,6 +78,7 @@ function M.get_buf_lines(buf, start, end_line)
   if not M.is_valid_buffer(buf) then
     return nil
   end
+  buf = M.resolve_buf(buf)
 
   local ok, lines = pcall(vim.api.nvim_buf_get_lines, buf, start, end_line, false)
   if not ok then
@@ -81,16 +99,39 @@ end
 ---@param lang string Parser language
 ---@return boolean Whether parser is available
 function M.has_parser(lang)
+  -- Try the modern vim.treesitter API first (Neovim >= 0.9)
+  if vim.treesitter.language and vim.treesitter.language.get_lang then
+    local ok = pcall(vim.treesitter.language.add, lang)
+    return ok
+  end
+
+  -- Fall back to nvim-treesitter
   if not M.has_treesitter() then
     return false
   end
-
   local ok, parsers = pcall(require, "nvim-treesitter.parsers")
   if not ok then
     return false
   end
-
   return parsers.has_parser(lang)
+end
+
+--- Get a tree-sitter query safely across Neovim versions
+--- Handles the rename from vim.treesitter.query.get_query (old) to
+--- vim.treesitter.query.get (new, >= 0.9)
+---@param lang string Parser language
+---@param query_name string Query name (e.g. "injections", "highlights")
+---@return any|nil Query object or nil
+function M.ts_get_query(lang, query_name)
+  local get_fn = vim.treesitter.query.get or vim.treesitter.query.get_query
+  if not get_fn then
+    return nil
+  end
+  local ok, query = pcall(get_fn, lang, query_name)
+  if ok then
+    return query
+  end
+  return nil
 end
 
 --- Check if Neovim version meets minimum requirement

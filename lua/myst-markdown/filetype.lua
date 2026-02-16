@@ -8,6 +8,9 @@ local M = {}
 local utils = require("myst-markdown.utils")
 local config = require("myst-markdown.config")
 
+--- Augroup name used for all filetype autocmds
+local AUGROUP = "MystMarkdownFiletype"
+
 --- Cache for filetype detection results
 --- Key: buffer number, Value: boolean (is_myst)
 local detection_cache = {}
@@ -16,6 +19,8 @@ local detection_cache = {}
 ---@param buf number Buffer handle
 ---@return boolean Whether buffer contains MyST content
 function M.detect_myst(buf)
+  buf = utils.resolve_buf(buf)
+
   -- Check cache first
   if config.get_value("performance.cache_enabled") then
     local cached = detection_cache[buf]
@@ -43,7 +48,6 @@ function M.detect_myst(buf)
   -- Check each line for MyST patterns
   for _, line in ipairs(lines) do
     if utils.matches_any(line, all_patterns) then
-      -- Cache result
       if config.get_value("performance.cache_enabled") then
         detection_cache[buf] = true
       end
@@ -70,18 +74,20 @@ function M.clear_all_caches()
   detection_cache = {}
 end
 
---- Setup secondary filetype detection to override markdown filetype
---- This handles cases where another plugin sets the filetype to markdown
-function M.setup_secondary_detection()
+--- Setup all filetype detection mechanisms.
+--- Uses a named augroup so repeated calls are idempotent.
+function M.setup()
+  local group = vim.api.nvim_create_augroup(AUGROUP, { clear = true })
+
+  -- Secondary detection: override markdown -> myst when another plugin sets it
   vim.api.nvim_create_autocmd("FileType", {
+    group = group,
     pattern = "markdown",
     callback = function(args)
       local buf = args.buf
-
       if not utils.is_valid_buffer(buf) then
         return
       end
-
       if M.detect_myst(buf) then
         vim.bo[buf].filetype = "myst" -- luacheck: ignore 122
         utils.debug("Overriding markdown filetype to myst")
@@ -89,12 +95,10 @@ function M.setup_secondary_detection()
     end,
     desc = "Override markdown filetype if MyST content detected",
   })
-end
 
---- Setup buffer change detection to clear cache
-function M.setup_cache_invalidation()
   -- Clear cache when buffer is written (content may have changed)
   vim.api.nvim_create_autocmd("BufWritePost", {
+    group = group,
     pattern = "*.md",
     callback = function(args)
       M.clear_cache(args.buf)
@@ -105,18 +109,13 @@ function M.setup_cache_invalidation()
 
   -- Clear cache when buffer is deleted
   vim.api.nvim_create_autocmd("BufDelete", {
+    group = group,
     callback = function(args)
       M.clear_cache(args.buf)
     end,
     desc = "Clear MyST detection cache on buffer delete",
   })
-end
 
---- Setup all filetype detection mechanisms
-function M.setup()
-  -- Note: Primary detection is handled by ftdetect/myst.lua using vim.filetype.add()
-  M.setup_secondary_detection()
-  M.setup_cache_invalidation()
   utils.debug("Filetype detection configured")
 end
 

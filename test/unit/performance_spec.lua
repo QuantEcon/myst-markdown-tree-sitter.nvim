@@ -1,65 +1,48 @@
--- Performance Tests for MyST Detection
--- Tests detection performance on large files
+-- Performance tests for MyST detection
+-- Tests detection performance on real buffers using the actual module code.
 
 describe("performance tests", function()
-  local detect_myst_pattern
+  local filetype = require("myst-markdown.filetype")
+  local config = require("myst-markdown.config")
+
+  local function make_buf(lines)
+    local buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+    return buf
+  end
 
   before_each(function()
-    -- Helper function to detect MyST patterns (matches main implementation)
-    detect_myst_pattern = function(line)
-      if not line or type(line) ~= "string" then
-        return false
+    config.merge({})
+    filetype.clear_all_caches()
+  end)
+
+  after_each(function()
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      if vim.api.nvim_buf_is_valid(buf) then
+        pcall(vim.api.nvim_buf_delete, buf, { force = true })
       end
-      -- Match MyST directive patterns
-      if line:match("^%s*```{[%w%-_]+}") then
-        return true
-      end
-      -- Match standalone directives
-      if line:match("^{[%w%-_]+}") then
-        return true
-      end
-      return false
     end
   end)
 
-  describe("large file handling", function()
-    it("should detect MyST in large file efficiently", function()
-      -- Read the large test file
-      local file_path = "test/fixtures/large_file.md"
-      local file = io.open(file_path, "r")
-
-      if not file then
-        pending("large_file.md not found - run: python3 script to generate it")
-        return
+  describe("large buffer handling", function()
+    it("should detect MyST in a large buffer quickly", function()
+      -- Build a buffer with 500 lines, MyST on line 3
+      local lines = { "# Large file", "", "```{code-cell} python" }
+      for i = 4, 500 do
+        lines[i] = "Line " .. i
       end
 
-      local lines = {}
-      for line in file:lines() do
-        table.insert(lines, line)
-      end
-      file:close()
+      local buf = make_buf(lines)
 
-      assert.truthy(#lines > 100, "Large file should have > 100 lines")
-
-      -- Time the detection (should be fast even for large files)
       local start_time = os.clock()
-      local myst_detected = false
-
-      -- Scan first 50 lines (default scan_lines)
-      for i = 1, math.min(50, #lines) do
-        if detect_myst_pattern(lines[i]) then
-          myst_detected = true
-          break
-        end
-      end
-
+      local detected = filetype.detect_myst(buf)
       local elapsed = os.clock() - start_time
 
-      assert.truthy(myst_detected, "Should detect MyST in large file")
-      assert.truthy(elapsed < 0.1, "Detection should complete in < 100ms")
+      assert.is_true(detected)
+      assert.is_true(elapsed < 0.1, "Detection should complete in < 100ms")
     end)
 
-    it("should handle files with many directives", function()
+    it("should handle buffer with many directives", function()
       local lines = {}
       for i = 1, 100 do
         table.insert(lines, "# Section " .. i)
@@ -68,81 +51,78 @@ describe("performance tests", function()
         table.insert(lines, "```")
       end
 
-      local count = 0
-      for _, line in ipairs(lines) do
-        if detect_myst_pattern(line) then
-          count = count + 1
-        end
-      end
-
-      assert.are.equal(100, count, "Should detect all 100 code-cell directives")
+      local buf = make_buf(lines)
+      assert.is_true(filetype.detect_myst(buf))
     end)
   end)
 
   describe("cache performance", function()
-    it("should benefit from caching on repeated calls", function()
-      local line = "```{code-cell} python"
+    it("should return cached result on second call", function()
+      config.merge({ performance = { cache_enabled = true } })
+      local buf = make_buf({ "```{code-cell} python", "x = 1", "```" })
 
-      -- First call (not cached)
-      local start1 = os.clock()
-      for _ = 1, 1000 do
-        detect_myst_pattern(line)
-      end
-      local time1 = os.clock() - start1
+      -- First call: populates cache
+      local t1 = os.clock()
+      assert.is_true(filetype.detect_myst(buf))
+      local first = os.clock() - t1
 
-      -- Second batch (potentially cached)
-      local start2 = os.clock()
-      for _ = 1, 1000 do
-        detect_myst_pattern(line)
-      end
-      local time2 = os.clock() - start2
+      -- Second call: should use cache (and be at least as fast)
+      local t2 = os.clock()
+      assert.is_true(filetype.detect_myst(buf))
+      local second = os.clock() - t2
 
-      -- Both should be fast (< 50ms for 1000 iterations)
-      assert.truthy(time1 < 0.05, "First batch should be fast")
-      assert.truthy(time2 < 0.05, "Second batch should be fast")
+      -- Both should be very fast
+      assert.is_true(first < 0.05, "First call should be < 50ms")
+      assert.is_true(second < 0.05, "Cached call should be < 50ms")
+    end)
+
+    it("should invalidate cache with clear_cache", function()
+      config.merge({ performance = { cache_enabled = true } })
+      local buf = make_buf({ "```{code-cell} python" })
+
+      assert.is_true(filetype.detect_myst(buf))
+
+      -- Replace content, clear cache, re-detect
+      vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "plain text" })
+      filetype.clear_cache(buf)
+      assert.is_false(filetype.detect_myst(buf))
+    end)
+
+    it("should invalidate all caches with clear_all_caches", function()
+      config.merge({ performance = { cache_enabled = true } })
+      local buf1 = make_buf({ "```{code-cell} python" })
+      local buf2 = make_buf({ "```{note}" })
+
+      assert.is_true(filetype.detect_myst(buf1))
+      assert.is_true(filetype.detect_myst(buf2))
+
+      -- Replace both, clear all caches
+      vim.api.nvim_buf_set_lines(buf1, 0, -1, false, { "plain" })
+      vim.api.nvim_buf_set_lines(buf2, 0, -1, false, { "plain" })
+      filetype.clear_all_caches()
+
+      assert.is_false(filetype.detect_myst(buf1))
+      assert.is_false(filetype.detect_myst(buf2))
     end)
   end)
 
-  describe("memory efficiency", function()
-    it("should not leak memory on repeated detections", function()
-      -- This is a basic test - real memory leak detection needs profiling
-      local line = "```{code-cell} python"
-
-      -- Run many iterations
-      for _ = 1, 10000 do
-        detect_myst_pattern(line)
+  describe("scan_lines configuration", function()
+    it("should scan only the configured number of lines", function()
+      local lines = {}
+      for i = 1, 100 do
+        lines[i] = "Plain line " .. i
       end
+      lines[10] = "```{code-cell} python"
 
-      -- If we got here without crashing, basic memory handling is OK
-      assert.truthy(true)
-    end)
-  end)
+      local buf = make_buf(lines)
 
-  describe("concurrent buffer operations", function()
-    it("should handle multiple pattern checks without interference", function()
-      local patterns = {
-        "```{code-cell} python",
-        "```{note}",
-        "```{warning}",
-        "```python", -- Not MyST
-        "Regular text", -- Not MyST
-        "```{code-cell} javascript",
-        "```{admonition} Title",
-      }
+      -- Default scan_lines = 50, so line 10 is within range
+      assert.is_true(filetype.detect_myst(buf))
 
-      local results = {}
-      for _, pattern in ipairs(patterns) do
-        table.insert(results, detect_myst_pattern(pattern))
-      end
-
-      -- Verify expected results
-      assert.truthy(results[1]) -- code-cell python
-      assert.truthy(results[2]) -- note
-      assert.truthy(results[3]) -- warning
-      assert.falsy(results[4]) -- plain python
-      assert.falsy(results[5]) -- regular text
-      assert.truthy(results[6]) -- code-cell javascript
-      assert.truthy(results[7]) -- admonition
+      -- Set scan_lines = 5, so line 10 is out of range
+      config.merge({ detection = { scan_lines = 5 } })
+      filetype.clear_all_caches()
+      assert.is_false(filetype.detect_myst(buf))
     end)
   end)
 end)

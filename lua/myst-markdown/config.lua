@@ -1,15 +1,22 @@
 --- Configuration module for myst-markdown plugin
---- Handles user configuration and default settings
+--- Handles user configuration, defaults, and validation.
 local M = {}
 
 --- Default configuration
+---
+--- Supported languages for code-cell injection are defined in
+--- queries/markdown/injections.scm and cannot be changed at runtime.
+--- See the README for the full list of supported languages.
 M.defaults = {
-  -- Enable debug logging (shows verbose initialization messages)
+  -- Enable debug logging (shows verbose initialisation messages)
   debug = false,
 
   -- Filetype detection settings
   detection = {
-    scan_lines = 50, -- Number of lines to scan for MyST patterns
+    -- Number of lines to scan from the top of a buffer when deciding
+    -- whether a .md file is MyST.
+    scan_lines = 50,
+    -- Lua patterns matched against each scanned line.
     patterns = {
       code_cell = "^```{code%-cell}", -- Code-cell directive
       myst_directive = "^```{[%w%-_:]+}", -- Other MyST directives
@@ -19,37 +26,12 @@ M.defaults = {
 
   -- Performance settings
   performance = {
-    defer_timeout = 50, -- ms to defer highlighting setup
-    refresh_wait = 100, -- ms to wait during refresh
     cache_enabled = true, -- Enable detection caching
   },
 
   -- Highlighting settings
   highlighting = {
     enabled = true,
-    priority = 110, -- Priority for highlight groups (if supported)
-  },
-
-  -- Supported languages for code-cell injection
-  languages = {
-    "python",
-    "javascript",
-    "bash",
-    "r",
-    "julia",
-    "cpp",
-    "c",
-    "rust",
-    "go",
-    "typescript",
-  },
-
-  -- Language aliases (e.g., ipython -> python)
-  language_aliases = {
-    ipython = "python",
-    ipython3 = "python",
-    js = "javascript",
-    sh = "bash",
   },
 }
 
@@ -68,15 +50,19 @@ end
 --- Get current configuration
 ---@return table Current configuration
 function M.get()
+  if next(M.config) == nil then
+    -- If setup() hasn't been called yet, return defaults as a safety net.
+    return M.defaults
+  end
   return M.config
 end
 
---- Get specific configuration value by path
+--- Get specific configuration value by dot-separated path
 ---@param path string Dot-separated path (e.g., "detection.scan_lines")
----@return any Configuration value
+---@return any Configuration value, or nil if not found
 function M.get_value(path)
   local keys = vim.split(path, ".", { plain = true })
-  local value = M.config
+  local value = M.get()
 
   for _, key in ipairs(keys) do
     if type(value) == "table" and value[key] ~= nil then
@@ -89,32 +75,51 @@ function M.get_value(path)
   return value
 end
 
---- Validate configuration
----@param config table Configuration to validate
+--- Validate user-supplied configuration before merging
+---@param user_config table Configuration to validate
 ---@return boolean, string|nil Valid, error message
-function M.validate(config)
-  -- Check detection.scan_lines is positive integer
-  if config.detection and config.detection.scan_lines then
-    if type(config.detection.scan_lines) ~= "number" or config.detection.scan_lines <= 0 then
-      return false, "detection.scan_lines must be a positive number"
+function M.validate(user_config)
+  if type(user_config) ~= "table" then
+    return false, "configuration must be a table"
+  end
+
+  -- Validate debug flag
+  if user_config.debug ~= nil and type(user_config.debug) ~= "boolean" then
+    return false, "debug must be a boolean"
+  end
+
+  -- Validate detection.scan_lines
+  if user_config.detection and user_config.detection.scan_lines then
+    local sl = user_config.detection.scan_lines
+    if type(sl) ~= "number" or sl <= 0 or sl ~= math.floor(sl) then
+      return false, "detection.scan_lines must be a positive integer"
     end
   end
 
-  -- Check performance timeouts are positive
-  if config.performance then
-    if
-      config.performance.defer_timeout
-      and (
-        type(config.performance.defer_timeout) ~= "number" or config.performance.defer_timeout < 0
-      )
-    then
-      return false, "performance.defer_timeout must be a non-negative number"
+  -- Validate detection.patterns
+  if user_config.detection and user_config.detection.patterns then
+    local p = user_config.detection.patterns
+    if type(p) ~= "table" then
+      return false, "detection.patterns must be a table"
     end
-    if
-      config.performance.refresh_wait
-      and (type(config.performance.refresh_wait) ~= "number" or config.performance.refresh_wait < 0)
-    then
-      return false, "performance.refresh_wait must be a non-negative number"
+    for key, val in pairs(p) do
+      if type(val) ~= "string" then
+        return false, "detection.patterns." .. key .. " must be a string"
+      end
+    end
+  end
+
+  -- Validate performance.cache_enabled
+  if user_config.performance and user_config.performance.cache_enabled ~= nil then
+    if type(user_config.performance.cache_enabled) ~= "boolean" then
+      return false, "performance.cache_enabled must be a boolean"
+    end
+  end
+
+  -- Validate highlighting.enabled
+  if user_config.highlighting and user_config.highlighting.enabled ~= nil then
+    if type(user_config.highlighting.enabled) ~= "boolean" then
+      return false, "highlighting.enabled must be a boolean"
     end
   end
 

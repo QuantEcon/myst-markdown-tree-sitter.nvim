@@ -12,7 +12,11 @@ local commands = require("myst-markdown.commands")
 --- Plugin version (single source of truth in version.lua)
 M.version = require("myst-markdown.version")
 
---- Setup function for the MyST markdown plugin
+--- Whether setup() has already been called at least once.
+local _setup_done = false
+
+--- Setup function for the MyST markdown plugin.
+--- Can be called multiple times safely; autocmds are recreated via augroups.
 ---@param opts table|nil User configuration options
 function M.setup(opts)
   -- Validate Neovim version
@@ -29,18 +33,30 @@ function M.setup(opts)
   end
 
   config.merge(opts)
+
+  -- Propagate the debug flag to utils so we avoid pcall(require) on every
+  -- debug() call.
+  utils._debug_enabled = config.get_value("debug") or false
+
   utils.debug("Configuration loaded")
 
-  -- Setup filetype detection
+  -- Setup filetype detection (idempotent via augroup)
   filetype.setup()
 
-  -- Setup highlighting autocmd for myst filetype
+  -- Setup highlighting autocmd for myst filetype (idempotent via augroup)
   highlighting.setup_filetype_autocmd()
 
-  -- Setup user commands
+  -- Setup user commands (idempotent — nvim_create_user_command overwrites)
   commands.setup()
 
+  _setup_done = true
   utils.debug("MyST Markdown plugin initialized (v" .. M.version .. ")")
+end
+
+--- Check whether setup() has been called
+---@return boolean
+function M.is_setup()
+  return _setup_done
 end
 
 -- Export sub-modules for advanced use
