@@ -14,14 +14,16 @@ describe("highlighting integration", function()
 
   describe("parser mapping", function()
     it("should map myst filetype to markdown parser", function()
-      -- Verify we can obtain a markdown parser for a myst-typed buffer
+      -- Verify the myst->markdown mapping by requesting the parser without
+      -- an explicit language, then asserting it resolved to markdown.
       local buf = vim.api.nvim_create_buf(false, true)
       vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "```{code-cell} python", "x=1", "```" })
       vim.bo[buf].filetype = "myst"
 
-      local ok, parser = pcall(vim.treesitter.get_parser, buf, "markdown")
-      assert.is_true(ok, "Should get markdown parser for myst buffer")
+      local ok, parser = pcall(vim.treesitter.get_parser, buf)
+      assert.is_true(ok, "Should get parser for myst buffer")
       assert.is_not_nil(parser)
+      assert.equals("markdown", parser:lang())
       vim.api.nvim_buf_delete(buf, { force = true })
     end)
   end)

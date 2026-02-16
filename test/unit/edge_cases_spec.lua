@@ -132,11 +132,9 @@ describe("edge case detection", function()
       assert.is_true(filetype.detect_myst(buf))
     end)
 
-    it("should NOT detect uppercase Code-Cell (MyST is case-sensitive)", function()
-      -- %w in Lua matches both cases, but real MyST only uses lowercase.
-      -- The current pattern allows uppercase — this tests current behaviour.
+    it("should detect uppercase Code-Cell (pattern is case-insensitive)", function()
+      -- %w in Lua matches both cases; the current patterns accept uppercase.
       local buf = make_buf({ "```{Code-Cell} python" })
-      -- Pattern ^```{[%w%-_:]+} does match uppercase, so this is detected.
       assert.is_true(filetype.detect_myst(buf))
     end)
   end)

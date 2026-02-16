@@ -64,8 +64,9 @@ function M.detect_myst(buf)
 end
 
 --- Clear detection cache for a specific buffer
----@param buf number Buffer handle
+---@param buf number Buffer handle (0 = current buffer)
 function M.clear_cache(buf)
+  buf = utils.resolve_buf(buf)
   detection_cache[buf] = nil
 end
 
