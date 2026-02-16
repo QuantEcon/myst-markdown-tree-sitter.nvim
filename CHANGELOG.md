@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **`{math}` directive highlighting now matches `$$` display math** — added
+  `queries/markdown/highlights.scm` that applies `@markup.math` to `{math}` block content,
+  giving it the same base math styling that `$$` blocks receive from the `markdown_inline`
+  parser. Previously `{math}` content only had `@markup.raw.block` (code block styling).
+
 ## [0.5.0] - 2026-02-17
 
 ### Changed
