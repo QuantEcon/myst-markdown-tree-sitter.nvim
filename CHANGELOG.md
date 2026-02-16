@@ -52,6 +52,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     `matches_any`, `check_version`, `ts_get_query`, and logging functions.
 - **All existing unit tests rewritten** to exercise the real module functions instead of
   redefining detection logic inline.
+- **`test/integration/highlight_positions_spec.lua`** — programmatic visual-highlighting tests
+  that use `vim.treesitter.get_captures_at_pos()` to verify tree-sitter injection places the
+  correct language captures (Python, JavaScript, Bash, LaTeX) at specific buffer positions
+  inside code-cell blocks, and confirms prose/headings are free of spurious injection. Also
+  validates parser tree children and works with YAML-config code-cells.
 
 ### Fixed
 - **Autocmd duplication on repeated `setup()` calls** — all autocmds now use unique augroups
