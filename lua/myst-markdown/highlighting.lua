@@ -113,7 +113,9 @@ function M.refresh_active_buffers()
         end
         local start_ok, start_err = pcall(vim.treesitter.start, buf, "markdown")
         if not start_ok then
-          utils.debug("Failed to restart tree-sitter for buffer " .. buf .. ": " .. tostring(start_err))
+          utils.debug(
+            "Failed to restart tree-sitter for buffer " .. buf .. ": " .. tostring(start_err)
+          )
         else
           utils.debug("Refreshed tree-sitter highlighting for buffer " .. buf)
         end
