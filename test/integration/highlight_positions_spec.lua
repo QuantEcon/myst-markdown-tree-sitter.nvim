@@ -400,7 +400,9 @@ describe("highlight positions", function()
       -- Some Neovim/tree-sitter versions don't emit it, so we treat
       -- its absence as a non-blocking pending rather than a hard failure.
       if not has_capture_at(buf, 9, 0, "markup.math") then
-        pending("upstream markdown_inline parser does not emit @markup.math for $$ on this Neovim version")
+        pending(
+          "upstream markdown_inline parser does not emit @markup.math for $$ on this Neovim version"
+        )
         return
       end
       assert.is_true(true)
