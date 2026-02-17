@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `queries/markdown/highlights.scm` that applies `@markup.math` to `{math}` block content,
   giving it the same base math styling that `$$` blocks receive from the `markdown_inline`
   parser. Previously `{math}` content only had `@markup.raw.block` (code block styling).
+- **Documentation updated** — removed references to defunct `performance.defer_timeout`,
+  `performance.refresh_wait`, and `highlighting.priority` options from README, Vim help docs,
+  and all example files. Updated test counts and version references.
 
 ## [0.5.0] - 2026-02-17
 

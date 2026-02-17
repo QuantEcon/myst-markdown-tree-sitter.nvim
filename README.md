@@ -12,7 +12,7 @@ This plugin provides syntax highlighting and filetype detection for [MyST (Marke
 - **Tree-sitter integration** for robust parsing
 - **Markdown compatibility** - works alongside existing markdown features
 - **Modular architecture** with clean separation of concerns
-- **Comprehensive testing** with 110 tests covering directives, edge cases, and performance
+- **Comprehensive testing** with 170+ tests covering directives, edge cases, and performance
 - **Vim help documentation** - Access via `:help myst-markdown`
 - **Configuration examples** - See `examples/` directory for common use cases
 
@@ -37,7 +37,7 @@ This plugin provides syntax highlighting and filetype detection for [MyST (Marke
 ```lua
 {
   "QuantEcon/myst-markdown-tree-sitter.nvim",
-  version = "0.4.4",  -- Pin to specific version for stability
+  version = "0.5.0",  -- Pin to specific version for stability
   dependencies = { "nvim-treesitter/nvim-treesitter" },
   ft = { "markdown", "myst" },
   config = function()
@@ -51,7 +51,6 @@ This plugin provides syntax highlighting and filetype detection for [MyST (Marke
       },
       highlighting = {
         enabled = true,
-        priority = 110,  -- Priority for highlight groups
       },
     })
   end,
@@ -60,7 +59,7 @@ This plugin provides syntax highlighting and filetype detection for [MyST (Marke
 ```
 
 **Configuration Options Explained:**
-- `version = "0.4.4"` - Pin to a specific release for stability, or use `version = "*"` for latest
+- `version = "0.5.0"` - Pin to a specific release for stability, or use `version = "*"` for latest
 - `ft = {"markdown", "myst"}` - Lazy loads the plugin only when opening markdown or MyST files, improving startup performance
 - `priority = 1000` - Ensures this plugin loads after other markdown plugins to prevent highlighting conflicts
 - `config` function - Runs the setup after treesitter is properly loaded
@@ -130,8 +129,6 @@ require('myst-markdown').setup({
   
   -- Performance settings
   performance = {
-    defer_timeout = 50,     -- ms to defer highlighting setup
-    refresh_wait = 100,     -- ms to wait during refresh
     cache_enabled = true,   -- Enable detection caching
   },
   
@@ -297,11 +294,11 @@ Copy any example to your config and adjust as needed.
 
 ## Testing
 
-The plugin includes comprehensive test coverage with **110 tests** (77 unit + 33 integration):
+The plugin includes comprehensive test coverage with **170+ tests** across unit and integration suites:
 
 **Test Categories:**
-- **Unit tests** - Pattern detection, configuration, edge cases, performance
-- **Integration tests** - Filetype detection, tree-sitter integration, commands, version management
+- **Unit tests** - Pattern detection, configuration, utilities, edge cases, performance
+- **Integration tests** - Filetype detection, tree-sitter integration, commands, version management, highlight positions
 
 **Run tests locally:**
 

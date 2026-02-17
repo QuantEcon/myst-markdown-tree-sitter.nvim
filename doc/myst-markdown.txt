@@ -28,6 +28,7 @@ with MyST-specific features, particularly `{code-cell}` directives.
 Features:
   • Automatic filetype detection for MyST markdown files
   • Code-cell directive highlighting with language-specific syntax
+  • Math directive highlighting with LaTeX syntax for `{math}` blocks
   • Tree-sitter integration for robust parsing
   • Markdown compatibility - works alongside existing markdown features
   • Configurable detection and performance settings
@@ -104,10 +105,6 @@ setup({config})
                          patterns. Default: 50
 
         {performance} (table) Performance settings
-            {defer_timeout} (number) Milliseconds to defer highlighting
-                            setup. Default: 50
-            {refresh_wait} (number) Milliseconds to wait during refresh.
-                           Default: 100
             {cache_enabled} (boolean) Enable detection caching.
                             Default: true
 
@@ -123,8 +120,6 @@ Example configuration with defaults: ~
         scan_lines = 50,
       },
       performance = {
-        defer_timeout = 50,
-        refresh_wait = 100,
         cache_enabled = true,
       },
       highlighting = {
@@ -191,6 +186,7 @@ Other MyST Directives ~
 
 The plugin detects various MyST directives:
 - `{code-cell}` - Executable code cells
+- `{math}` - LaTeX math blocks with syntax highlighting
 - `{note}` - Note admonitions
 - `{warning}` - Warning admonitions
 - And other MyST-specific syntax

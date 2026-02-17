@@ -9,12 +9,6 @@ require('myst-markdown').setup({
   },
 
   performance = {
-    -- Minimal defer time for faster initial highlighting
-    defer_timeout = 25,
-
-    -- Shorter refresh wait for snappier updates
-    refresh_wait = 50,
-
     -- Keep caching enabled (critical for performance)
     cache_enabled = true,
   },
