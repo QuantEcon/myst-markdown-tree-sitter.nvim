@@ -163,10 +163,27 @@ function M.setup_filetype_autocmd()
   register_parser_mapping()
   M.setup_highlight_groups()
 
-  -- Invalidate cached tree-sitter queries and refresh any buffers that were
-  -- opened before this plugin loaded (e.g. lazy.nvim ft-based loading).
-  M.invalidate_query_cache()
-  M.refresh_active_buffers()
+  -- If there are already-open markdown/myst buffers, the plugin loaded after
+  -- files were opened (e.g. lazy.nvim ft-based loading).  Invalidate the
+  -- query cache and restart highlighting so our injection queries are used.
+  -- Deferred via vim.schedule to avoid interfering with ongoing initialisation.
+  local has_open_buffers = false
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(buf) then
+      local ft = vim.bo[buf].filetype
+      if ft == "myst" or ft == "markdown" then
+        has_open_buffers = true
+        break
+      end
+    end
+  end
+
+  if has_open_buffers then
+    vim.schedule(function()
+      M.invalidate_query_cache()
+      M.refresh_active_buffers()
+    end)
+  end
 end
 
 return M
