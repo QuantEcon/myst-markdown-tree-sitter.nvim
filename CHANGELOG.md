@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **`` ```latex `` blocks now receive `@markup.math` styling** — standard markdown LaTeX fenced
+  code blocks were missing the `@markup.math` highlight that `{math}` and `$$` blocks receive,
+  causing visual inconsistency across the three LaTeX syntax forms.
+
 ## [0.5.0] - 2026-02-17
 
 ### Changed
