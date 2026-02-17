@@ -7,15 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-- **`{math}` directive highlighting now matches `$$` display math** — added
-  `queries/markdown/highlights.scm` that applies `@markup.math` to `{math}` block content,
-  giving it the same base math styling that `$$` blocks receive from the `markdown_inline`
-  parser. Previously `{math}` content only had `@markup.raw.block` (code block styling).
-- **Documentation updated** — removed references to defunct `performance.defer_timeout`,
-  `performance.refresh_wait`, and `highlighting.priority` options from README, Vim help docs,
-  and all example files. Updated test counts and version references.
-
 ## [0.5.0] - 2026-02-17
 
 ### Changed
@@ -75,6 +66,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Edge case test contained `assert.truthy(result or not result)`** which always passed — replaced
   with a meaningful assertion.
 - **`config.get()` returned empty table before `setup()`** — now falls back to `defaults`.
+- **`{math}` directive highlighting now matches `$$` display math** — added
+  `queries/markdown/highlights.scm` that applies `@markup.math` to `{math}` block content,
+  giving it the same base math styling that `$$` blocks receive from the `markdown_inline`
+  parser. Previously `{math}` content only had `@markup.raw.block` (code block styling).
+- **Documentation updated** — removed references to defunct `performance.defer_timeout`,
+  `performance.refresh_wait`, and `highlighting.priority` options from README, Vim help docs,
+  and all example files. Updated test counts and version references.
+- **CI fix** — `TSInstallSync` with multiple parsers was hanging; split into individual
+  invocations with `timeout-minutes: 5` safety net.
 
 ## [0.4.4] - 2025-12-04
 
