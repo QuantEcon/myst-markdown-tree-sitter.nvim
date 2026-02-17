@@ -55,8 +55,14 @@ function M.invalidate_query_cache()
 
   -- Neovim >= 0.10: public API
   if vim.treesitter.query.invalidate then
-    pcall(vim.treesitter.query.invalidate, "markdown")
-    pcall(vim.treesitter.query.invalidate, "markdown_inline")
+    local inv_ok, inv_err = pcall(vim.treesitter.query.invalidate, "markdown")
+    if not inv_ok then
+      utils.debug("Failed to invalidate markdown query cache: " .. tostring(inv_err))
+    end
+    local inv_ok2, inv_err2 = pcall(vim.treesitter.query.invalidate, "markdown_inline")
+    if not inv_ok2 then
+      utils.debug("Failed to invalidate markdown_inline query cache: " .. tostring(inv_err2))
+    end
     utils.debug("Invalidated markdown query cache (public API)")
     ok = true
   else
@@ -85,21 +91,32 @@ function M.invalidate_query_cache()
   return ok
 end
 
---- Restart tree-sitter highlighting on already-open myst/markdown buffers.
+--- Restart tree-sitter highlighting on already-open myst buffers.
 --- Called after query cache invalidation to pick up the new injection queries.
+--- Only refreshes buffers that contain MyST content to avoid unnecessary
+--- restarts on regular markdown files.
 function M.refresh_active_buffers()
   if not vim.treesitter.start then
     return
   end
 
+  local filetype_mod = require("myst-markdown.filetype")
+
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     if vim.api.nvim_buf_is_loaded(buf) then
       local ft = vim.bo[buf].filetype
-      if ft == "myst" or ft == "markdown" then
+      if ft == "myst" or (ft == "markdown" and filetype_mod.detect_myst(buf)) then
         -- Stop then restart so the LanguageTree re-reads queries
-        pcall(vim.treesitter.stop, buf)
-        pcall(vim.treesitter.start, buf, "markdown")
-        utils.debug("Refreshed tree-sitter highlighting for buffer " .. buf)
+        local stop_ok, stop_err = pcall(vim.treesitter.stop, buf)
+        if not stop_ok then
+          utils.debug("Failed to stop tree-sitter for buffer " .. buf .. ": " .. tostring(stop_err))
+        end
+        local start_ok, start_err = pcall(vim.treesitter.start, buf, "markdown")
+        if not start_ok then
+          utils.debug("Failed to restart tree-sitter for buffer " .. buf .. ": " .. tostring(start_err))
+        else
+          utils.debug("Refreshed tree-sitter highlighting for buffer " .. buf)
+        end
       end
     end
   end
