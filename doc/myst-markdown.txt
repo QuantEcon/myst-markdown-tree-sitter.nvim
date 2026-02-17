@@ -56,13 +56,18 @@ Using lazy.nvim ~
     {
       'QuantEcon/myst-markdown-tree-sitter.nvim',
       dependencies = {'nvim-treesitter/nvim-treesitter'},
-      ft = {"markdown", "myst"},
+      event = "VeryLazy",
       config = function()
         require('myst-markdown').setup()
       end,
-      priority = 1000,
     }
 <
+
+Note: Avoid using `ft = {"markdown", "myst"}` for lazy loading. This can
+cause the plugin to load after nvim-treesitter has already cached markdown
+queries, which means MyST injection patterns (like `{code-cell}` highlighting)
+may not take effect. The plugin includes a workaround that invalidates the
+query cache on setup, but `event = "VeryLazy"` avoids the issue entirely.
 
 Using packer.nvim ~
 >lua
@@ -273,9 +278,18 @@ Conflicts with other markdown plugins ~
 
 If experiencing conflicts:
 
-1. Set `priority = 1000` in lazy.nvim config to load after other plugins
+1. Use `event = "VeryLazy"` in lazy.nvim config instead of `ft`-based loading
 2. Ensure myst-markdown is loaded after other markdown-related plugins
 3. Check for duplicate filetype detections in other plugins
+
+Lazy loading issues ~
+
+If code-cell highlighting doesn't work with lazy.nvim:
+
+1. Switch from `ft = {"markdown", "myst"}` to `event = "VeryLazy"`
+2. If you must use `ft`, the plugin will attempt to invalidate the query
+   cache automatically, but results may vary across Neovim versions
+3. Run |:MystDebug| to verify injection queries are loaded
 
 Getting help ~
 

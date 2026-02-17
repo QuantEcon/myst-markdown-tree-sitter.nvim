@@ -9,11 +9,11 @@ return {
     'nvim-treesitter/nvim-treesitter',
   },
   
-  -- Lazy load only for markdown and myst files
-  ft = { "markdown", "myst" },
-  
-  -- Load after other markdown plugins to prevent conflicts
-  priority = 1000,
+  -- Load after startup so injection queries are in runtimepath before any
+  -- markdown file opens.  Avoid ft = {"markdown","myst"} because that can
+  -- cause the plugin to load after nvim-treesitter has already cached
+  -- markdown queries, which may prevent {code-cell} highlighting.
+  event = "VeryLazy",
   
   -- Plugin configuration
   config = function()
@@ -55,8 +55,7 @@ return {
 --   {
 --     'QuantEcon/myst-markdown-tree-sitter.nvim',
 --     dependencies = { 'nvim-treesitter/nvim-treesitter' },
---     ft = { "markdown", "myst" },
---     priority = 1000,
+--     event = "VeryLazy",
 --     config = function()
 --       require('myst-markdown').setup()
 --     end,

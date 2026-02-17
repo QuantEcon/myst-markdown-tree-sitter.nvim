@@ -25,11 +25,10 @@ This plugin provides syntax highlighting and filetype detection for [MyST (Marke
 {
   'QuantEcon/myst-markdown-tree-sitter.nvim',
   dependencies = {'nvim-treesitter/nvim-treesitter'},
-  ft = {"markdown", "myst"},
+  event = "VeryLazy",
   config = function()
     require('myst-markdown').setup()
   end,
-  priority = 1000, -- Load after other markdown plugins
 }
 ```
 
@@ -39,7 +38,7 @@ This plugin provides syntax highlighting and filetype detection for [MyST (Marke
   "QuantEcon/myst-markdown-tree-sitter.nvim",
   version = "0.5.1",  -- Pin to specific version for stability
   dependencies = { "nvim-treesitter/nvim-treesitter" },
-  ft = { "markdown", "myst" },
+  event = "VeryLazy",
   config = function()
     require('myst-markdown').setup({
       debug = false,  -- Set true for troubleshooting
@@ -54,15 +53,15 @@ This plugin provides syntax highlighting and filetype detection for [MyST (Marke
       },
     })
   end,
-  priority = 1000,
 }
 ```
 
 **Configuration Options Explained:**
 - `version = "0.5.1"` - Pin to a specific release for stability, or use `version = "*"` for latest
-- `ft = {"markdown", "myst"}` - Lazy loads the plugin only when opening markdown or MyST files, improving startup performance
-- `priority = 1000` - Ensures this plugin loads after other markdown plugins to prevent highlighting conflicts
+- `event = "VeryLazy"` - Loads the plugin after startup but before any files are opened, ensuring tree-sitter injection queries are available when markdown files open
 - `config` function - Runs the setup after treesitter is properly loaded
+
+> **Note:** Avoid using `ft = {"markdown", "myst"}` for lazy loading. This can cause the plugin to load *after* nvim-treesitter has already cached markdown queries, which means MyST injection patterns (like `{code-cell}` highlighting) may not take effect. The plugin includes a workaround for this, but `event = "VeryLazy"` avoids the issue entirely.
 
 ### Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
 
@@ -87,13 +86,12 @@ To test unreleased changes from a specific branch (useful for testing fixes befo
   'QuantEcon/myst-markdown-tree-sitter.nvim',
   branch = 'branch-name',  -- Replace with the actual branch name
   dependencies = {'nvim-treesitter/nvim-treesitter'},
-  ft = {"markdown", "myst"},
+  event = "VeryLazy",
   config = function()
     -- Your MyST setup here
     -- Ensure this runs after treesitter is loaded
     require('myst-markdown').setup()
   end,
-  priority = 1000, -- Load after other markdown plugins
 }
 ```
 
@@ -238,6 +236,7 @@ If MyST highlighting is not working:
 - Check if the language parser is installed: `:TSInstall <language>`
 - Example: For Python highlighting, run `:TSInstall python`
 - Verify parser is loaded: `:lua print(vim.inspect(require('nvim-treesitter.parsers').get_parser()))`
+- If using lazy.nvim with `ft = {"markdown", "myst"}`, switch to `event = "VeryLazy"` — `ft`-based loading can cause the plugin's injection queries to be missed (see note in Installation section above)
 
 **Math directive highlighting not working?**
 - Install the LaTeX parser: `:TSInstall latex`

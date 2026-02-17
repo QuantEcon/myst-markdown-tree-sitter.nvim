@@ -6,6 +6,9 @@ local utils = require("myst-markdown.utils")
 --- Augroup name used for all highlighting autocmds
 local AUGROUP = "MystMarkdownHighlighting"
 
+--- Whether we have already invalidated the query cache during this session.
+local _cache_invalidated = false
+
 --- Register the myst filetype to use the markdown parser.
 --- Uses the modern vim.treesitter.language.register() API when available,
 --- falling back to the legacy nvim-treesitter filetype_to_parsername table.
@@ -34,6 +37,72 @@ local function register_parser_mapping()
 
   utils.warn("Could not register myst -> markdown parser mapping")
   return false
+end
+
+--- Invalidate cached tree-sitter queries for the markdown parser so that
+--- our injection queries (from queries/markdown/) are picked up even when
+--- the plugin loads after nvim-treesitter has already cached queries.
+--- This handles the common case where a plugin manager (e.g. lazy.nvim with
+--- ft-based loading) adds this plugin to the runtimepath after the markdown
+--- parser has already started with its own queries.
+---@return boolean Whether invalidation succeeded
+function M.invalidate_query_cache()
+  if _cache_invalidated then
+    return true
+  end
+
+  local ok = false
+
+  -- Neovim >= 0.10: public API
+  if vim.treesitter.query.invalidate then
+    pcall(vim.treesitter.query.invalidate, "markdown")
+    pcall(vim.treesitter.query.invalidate, "markdown_inline")
+    utils.debug("Invalidated markdown query cache (public API)")
+    ok = true
+  else
+    -- Neovim 0.9: internal cache table
+    local query_mod = vim.treesitter.query
+    if type(query_mod) == "table" then
+      for _, cache_key in ipairs({ "_query_cache", "cache" }) do
+        local cache = rawget(query_mod, cache_key)
+        if type(cache) == "table" then
+          cache["markdown"] = nil
+          cache["markdown_inline"] = nil
+          utils.debug("Invalidated markdown query cache (internal: " .. cache_key .. ")")
+          ok = true
+          break
+        end
+      end
+    end
+  end
+
+  if ok then
+    _cache_invalidated = true
+  else
+    utils.debug("Could not invalidate query cache (no known cache found)")
+  end
+
+  return ok
+end
+
+--- Restart tree-sitter highlighting on already-open myst/markdown buffers.
+--- Called after query cache invalidation to pick up the new injection queries.
+function M.refresh_active_buffers()
+  if not vim.treesitter.start then
+    return
+  end
+
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(buf) then
+      local ft = vim.bo[buf].filetype
+      if ft == "myst" or ft == "markdown" then
+        -- Stop then restart so the LanguageTree re-reads queries
+        pcall(vim.treesitter.stop, buf)
+        pcall(vim.treesitter.start, buf, "markdown")
+        utils.debug("Refreshed tree-sitter highlighting for buffer " .. buf)
+      end
+    end
+  end
 end
 
 --- Setup highlight groups for MyST elements
@@ -93,6 +162,11 @@ function M.setup_filetype_autocmd()
   -- FileType event fires (e.g. when ftdetect sets the filetype).
   register_parser_mapping()
   M.setup_highlight_groups()
+
+  -- Invalidate cached tree-sitter queries and refresh any buffers that were
+  -- opened before this plugin loaded (e.g. lazy.nvim ft-based loading).
+  M.invalidate_query_cache()
+  M.refresh_active_buffers()
 end
 
 return M

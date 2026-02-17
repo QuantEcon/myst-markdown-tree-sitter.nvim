@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Lazy loading with `ft` no longer breaks injection queries** — when the plugin loads after
+  nvim-treesitter has already cached markdown queries (e.g. lazy.nvim `ft`-based loading), the
+  plugin now invalidates the query cache and restarts tree-sitter highlighting on already-open
+  buffers so that MyST injection patterns like `{code-cell}` are picked up.
+
+### Changed
+- **Recommended lazy.nvim config uses `event = "VeryLazy"` instead of `ft`** — this avoids
+  query cache timing issues entirely by ensuring the plugin is in the runtimepath before any
+  files are opened.
+
 ## [0.5.1] - 2026-02-17
 
 ### Fixed
