@@ -12,14 +12,6 @@ require('myst-markdown').setup({
 
   -- Performance tuning
   performance = {
-    -- Milliseconds to defer highlighting setup after buffer load
-    -- Helps prevent UI blocking on slow machines
-    defer_timeout = 50,  -- Default: 50
-
-    -- Milliseconds to wait during highlighting refresh
-    -- Adjust if you see flickering or delays
-    refresh_wait = 100,  -- Default: 100
-
     -- Enable caching of filetype detection results
     -- Prevents re-scanning files unnecessarily
     cache_enabled = true,  -- Default: true

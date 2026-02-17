@@ -38,7 +38,11 @@ jobs:
 
       - name: Install Tree-sitter parsers
         run: |
-          nvim --headless -c "TSInstallSync markdown markdown_inline python lua | quit"
+          nvim --headless -c "TSInstallSync markdown" -c "quit"
+          nvim --headless -c "TSInstallSync markdown_inline" -c "quit"
+          nvim --headless -c "TSInstallSync python" -c "quit"
+          nvim --headless -c "TSInstallSync lua" -c "quit"
+        timeout-minutes: 5
 
       - name: Run unit tests
         run: make test-unit

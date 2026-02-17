@@ -9,8 +9,6 @@ require('myst-markdown').setup({
   },
 
   performance = {
-    defer_timeout = 50,
-    refresh_wait = 100,
     cache_enabled = true,
   },
 

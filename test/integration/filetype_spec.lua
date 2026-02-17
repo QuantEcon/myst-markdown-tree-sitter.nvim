@@ -63,14 +63,12 @@ describe("filetype detection", function()
         return vim.bo.filetype ~= ""
       end)
 
-      -- Check if tree-sitter is available
-      local has_ts = pcall(require, "nvim-treesitter.parsers")
-      if has_ts then
-        local parsers = require("nvim-treesitter.parsers")
-        -- Check that myst filetype is mapped to markdown parser
-        local parser_name = parsers.filetype_to_parsername.myst
-        assert.equals("markdown", parser_name)
-      end
+      -- Verify Tree-sitter resolves the correct parser for the myst buffer
+      local buf = vim.api.nvim_get_current_buf()
+      local ok, parser = pcall(vim.treesitter.get_parser, buf)
+      assert.is_true(ok, "Should be able to get parser for myst buffer")
+      assert.is_not_nil(parser)
+      assert.equals("markdown", parser:lang())
     end)
   end)
 

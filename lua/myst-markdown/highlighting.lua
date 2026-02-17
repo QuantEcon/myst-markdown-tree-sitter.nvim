@@ -1,25 +1,51 @@
 --- Highlighting module for MyST Markdown
+--- Manages tree-sitter parser registration and highlight group creation.
 local M = {}
 local utils = require("myst-markdown.utils")
 
+--- Augroup name used for all highlighting autocmds
+local AUGROUP = "MystMarkdownHighlighting"
+
+--- Register the myst filetype to use the markdown parser.
+--- Uses the modern vim.treesitter.language.register() API when available,
+--- falling back to the legacy nvim-treesitter filetype_to_parsername table.
+---@return boolean Whether registration succeeded
+local function register_parser_mapping()
+  -- Modern API (Neovim >= 0.9)
+  if vim.treesitter.language and vim.treesitter.language.register then
+    local ok, err = pcall(vim.treesitter.language.register, "markdown", "myst")
+    if ok then
+      utils.debug("Registered myst -> markdown parser (modern API)")
+      return true
+    end
+    utils.debug("vim.treesitter.language.register failed: " .. tostring(err))
+  end
+
+  -- Legacy fallback via nvim-treesitter
+  local ok, parsers = pcall(require, "nvim-treesitter.parsers")
+  if ok and parsers then
+    if not parsers.filetype_to_parsername then
+      parsers.filetype_to_parsername = {}
+    end
+    parsers.filetype_to_parsername.myst = "markdown"
+    utils.debug("Registered myst -> markdown parser (legacy API)")
+    return true
+  end
+
+  utils.warn("Could not register myst -> markdown parser mapping")
+  return false
+end
+
 --- Setup highlight groups for MyST elements
 function M.setup_highlight_groups()
-  -- Create highlight groups for MyST directives
-  -- Note: Priority parameter removed for compatibility with older Neovim versions
-  vim.api.nvim_set_hl(0, "@myst.code_cell.directive", {
-    link = "Special",
-  })
-
-  -- Additional MyST-specific highlights
-  vim.api.nvim_set_hl(0, "@myst.directive", {
-    link = "Special",
-  })
-
+  vim.api.nvim_set_hl(0, "@myst.code_cell.directive", { link = "Special" })
+  vim.api.nvim_set_hl(0, "@myst.directive", { link = "Special" })
   utils.debug("MyST highlight groups configured")
 end
 
---- Setup tree-sitter highlighting for MyST filetype
----@param buf number|nil Buffer handle (defaults to current buffer)
+--- Setup tree-sitter highlighting for a single buffer
+---@param buf number Buffer handle (0 = current buffer)
+---@return boolean Whether setup succeeded
 function M.setup_treesitter(buf)
   buf = buf or 0
 
@@ -28,25 +54,10 @@ function M.setup_treesitter(buf)
     return false
   end
 
-  if not utils.has_treesitter() then
-    utils.warn("nvim-treesitter not available")
-    return false
-  end
+  -- Ensure parser mapping is registered
+  register_parser_mapping()
 
-  -- Configure parser for myst filetype to use markdown parser
-  local ok, parsers = pcall(require, "nvim-treesitter.parsers")
-  if not ok then
-    utils.error("Failed to load nvim-treesitter.parsers")
-    return false
-  end
-
-  -- Set up filetype to parser mapping
-  if not parsers.filetype_to_parsername then
-    parsers.filetype_to_parsername = {}
-  end
-  parsers.filetype_to_parsername.myst = "markdown"
-
-  -- Start tree-sitter highlighting with markdown parser
+  -- Start tree-sitter highlighting with the markdown parser
   if vim.treesitter.start then
     local start_ok = pcall(vim.treesitter.start, buf, "markdown")
     if not start_ok then
@@ -54,49 +65,34 @@ function M.setup_treesitter(buf)
       return false
     end
   else
-    -- Fallback for older Neovim versions
-    vim.bo[buf].syntax = "markdown" -- luacheck: ignore 122
-    utils.debug("Using fallback syntax highlighting")
+    -- Fallback for Neovim < 0.9
+    local real_buf = utils.resolve_buf(buf)
+    vim.bo[real_buf].syntax = "markdown" -- luacheck: ignore 122
+    utils.debug("Using fallback syntax highlighting (Neovim < 0.9)")
   end
 
   return true
 end
 
---- Setup MyST highlighting for current buffer
----@param buf number|nil Buffer handle (defaults to current buffer)
-function M.setup(buf)
-  buf = buf or 0
-
-  -- Setup highlight groups
-  M.setup_highlight_groups()
-
-  -- Setup tree-sitter
-  local success = M.setup_treesitter(buf)
-
-  if success then
-    utils.debug("MyST highlighting enabled for buffer " .. buf)
-  else
-    utils.warn("MyST highlighting setup incomplete for buffer " .. buf)
-  end
-
-  return success
-end
-
---- Setup FileType autocmd for myst filetype
+--- Setup FileType autocmd that initialises highlighting for every myst buffer.
+--- Uses an augroup so repeated calls to setup() are idempotent.
 function M.setup_filetype_autocmd()
+  local group = vim.api.nvim_create_augroup(AUGROUP, { clear = true })
+
   vim.api.nvim_create_autocmd("FileType", {
+    group = group,
     pattern = "myst",
     callback = function(args)
-      local buf = args.buf
-
-      -- Setup tree-sitter highlighting
-      M.setup_treesitter(buf)
-
-      -- Setup MyST highlighting
+      M.setup_treesitter(args.buf)
       M.setup_highlight_groups()
     end,
-    desc = "Setup MyST highlighting on FileType event",
+    desc = "Setup MyST tree-sitter highlighting on FileType event",
   })
+
+  -- Also register the parser mapping eagerly so queries resolve before any
+  -- FileType event fires (e.g. when ftdetect sets the filetype).
+  register_parser_mapping()
+  M.setup_highlight_groups()
 end
 
 return M
