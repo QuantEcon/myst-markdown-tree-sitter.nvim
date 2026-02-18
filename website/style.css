@@ -410,6 +410,14 @@ ul {
 .c-lang { color: var(--syn-lang); font-weight: 600; }
 .c-math { color: var(--syn-math); }
 
+/* LaTeX syntax */
+.c-tex-cmd { color: #d2a8ff; }        /* \begin, \end — purple, like functions */
+.c-tex-brace { color: #8b949e; }      /* { } — muted gray */
+.c-tex-env { color: #7ee787; }        /* aligned — green, like identifiers */
+.c-tex-var { color: #e6edf3; }        /* E, F, mc, ma — primary text */
+.c-tex-op { color: #ff7b72; }         /* &=, \\, ^  — red, like operators */
+.c-tex-sup { color: #79c0ff; }        /* ^2 — blue, like numbers */
+
 /* Inline code blocks (for troubleshooting) */
 .code-inline {
   background: var(--bg-code);
