@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#161b22"/>
+      <stop offset="100%" stop-color="#0d1117"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7ee787"/>
+      <stop offset="100%" stop-color="#56d364"/>
+    </linearGradient>
+    <linearGradient id="purple" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d2a8ff"/>
+      <stop offset="100%" stop-color="#bc8cff"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="128" height="128" rx="22" fill="url(#bg)"/>
+  <!-- Subtle border -->
+  <rect width="126" height="126" x="1" y="1" rx="21" fill="none" stroke="#30363d" stroke-width="1.5"/>
+  <!-- Left bracket < -->
+  <path d="M48 40L24 64L48 88" stroke="url(#accent)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Right bracket > -->
+  <path d="M80 40L104 64L80 88" stroke="url(#accent)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Slash / -->
+  <path d="M72 32L56 96" stroke="url(#purple)" stroke-width="7" stroke-linecap="round" fill="none"/>
+</svg>
