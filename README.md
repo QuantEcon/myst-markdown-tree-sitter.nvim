@@ -59,7 +59,7 @@ This plugin provides syntax highlighting and filetype detection for [MyST (Marke
 **Configuration Options Explained:**
 - `version = "0.5.1"` - Pin to a specific release for stability, or use `version = "*"` for latest
 - `ft = {"markdown", "myst"}` - Lazy loads the plugin only when opening markdown or MyST files
-- `config` function - Runs the setup after treesitter is properly loaded
+- `config` function - Called when the plugin is loaded; assumes Tree-sitter is available via `dependencies`
 
 ### Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
 
@@ -236,7 +236,7 @@ If MyST highlighting is not working:
 - Verify parser is loaded: `:lua print(vim.inspect(require('nvim-treesitter.parsers').get_parser()))`
 
 **Conflicts with other MyST plugins?**
-- If you previously used a standalone `myst-markdown` plugin (not this one), remove it — it can conflict with `myst-markdown-tree-sitter.nvim`'s filetype detection and query injection
+- If you have another MyST plugin installed (e.g. `myst-markdown.nvim` without `tree-sitter` in the name), remove it — it can conflict with `myst-markdown-tree-sitter.nvim`'s filetype detection and query injection. Check via `:scriptnames` or `:echo &runtimepath`
 
 **Math directive highlighting not working?**
 - Install the LaTeX parser: `:TSInstall latex`

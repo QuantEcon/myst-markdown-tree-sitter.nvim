@@ -272,17 +272,24 @@ Conflicts with other markdown plugins ~
 
 If experiencing conflicts:
 
-1. Remove any standalone `myst-markdown` plugin — it conflicts with this one
-2. Ensure myst-markdown-tree-sitter.nvim is loaded after other markdown plugins
-3. Check for duplicate filetype detections in other plugins
+1. Remove any other MyST plugin (e.g. `myst-markdown.nvim` without
+   `tree-sitter` in the name) — it conflicts with this one
+2. For lazy.nvim, ensure myst-markdown-tree-sitter.nvim loads after other
+   markdown plugins by listing them in the `dependencies` field or placing
+   its spec after theirs in your plugin list
+3. Check for duplicate filetype detections or markdown Tree-sitter query
+   overrides in other plugins
 
 Lazy loading issues ~
 
 If code-cell highlighting doesn't work with lazy.nvim:
 
 1. Ensure you are using `ft = {"markdown", "myst"}` in your plugin spec
-2. Run |:MystDebug| to verify injection queries are loaded
-3. If you previously used a standalone `myst-markdown` plugin, remove it
+2. If highlighting is missing, reload the buffer with `:edit` to force
+   Tree-sitter to re-read injection queries
+3. Run |:MystDebug| to verify injection queries are loaded
+4. If you have another MyST plugin installed (e.g. `myst-markdown.nvim`
+   without `tree-sitter` in the name), remove it
 
 Getting help ~
 
