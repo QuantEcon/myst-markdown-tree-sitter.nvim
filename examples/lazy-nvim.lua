@@ -12,9 +12,6 @@ return {
   -- Lazy load only for markdown and myst files
   ft = { "markdown", "myst" },
   
-  -- Load after other markdown plugins to prevent conflicts
-  priority = 1000,
-  
   -- Plugin configuration
   config = function()
     require('myst-markdown').setup({
@@ -56,7 +53,6 @@ return {
 --     'QuantEcon/myst-markdown-tree-sitter.nvim',
 --     dependencies = { 'nvim-treesitter/nvim-treesitter' },
 --     ft = { "markdown", "myst" },
---     priority = 1000,
 --     config = function()
 --       require('myst-markdown').setup()
 --     end,
