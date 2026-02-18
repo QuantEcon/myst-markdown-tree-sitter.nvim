@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>myst-markdown-tree-sitter.nvim — MyST Syntax Highlighting for Neovim</title>
+  <meta name="description" content="Tree-sitter powered syntax highlighting for MyST Markdown in Neovim. Code-cell directives, math blocks, and 10+ languages.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <span class="nav-logo-icon">🌿</span>
+        <span class="nav-logo-text">MyST for Neovim</span>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#installation">Install</a></li>
+        <li><a href="#configuration">Config</a></li>
+        <li><a href="#languages">Languages</a></li>
+        <li><a href="#commands">Commands</a></li>
+        <li><a href="#troubleshooting">Help</a></li>
+        <li><a href="https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim" class="nav-github" target="_blank" rel="noopener">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+        </a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-bg-glow"></div>
+    <div class="container">
+      <div class="hero-badge">v0.5.1 · Neovim Plugin</div>
+      <h1 class="hero-title">
+        <span class="hero-title-myst">myst-markdown</span><br>
+        <span class="hero-title-ts">tree-sitter</span><span class="hero-title-nvim">.nvim</span>
+      </h1>
+      <p class="hero-subtitle">Tree-sitter powered syntax highlighting for <a href="https://mystmd.org/" target="_blank" rel="noopener">MyST Markdown</a> in Neovim.<br>Code-cell directives, math blocks, and 10+ language injections.</p>
+      <div class="hero-actions">
+        <a href="#installation" class="btn btn-primary">Get Started</a>
+        <a href="https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim" class="btn btn-secondary" target="_blank" rel="noopener">View on GitHub</a>
+      </div>
+      <div class="hero-code">
+        <div class="code-window">
+          <div class="code-window-bar">
+            <span class="code-dot red"></span>
+            <span class="code-dot yellow"></span>
+            <span class="code-dot green"></span>
+            <span class="code-window-title">example.md</span>
+          </div>
+          <pre class="code-block"><code><span class="c-comment"># MyST Markdown Example</span>
+
+<span class="c-directive">```{code-cell}</span> <span class="c-lang">python</span>
+<span class="c-keyword">import</span> <span class="c-module">pandas</span> <span class="c-keyword">as</span> <span class="c-module">pd</span>
+
+<span class="c-var">df</span> <span class="c-op">=</span> <span class="c-module">pd</span>.<span class="c-func">DataFrame</span>({
+    <span class="c-string">"x"</span>: [<span class="c-number">1</span>, <span class="c-number">2</span>, <span class="c-number">3</span>],
+    <span class="c-string">"y"</span>: [<span class="c-number">4</span>, <span class="c-number">5</span>, <span class="c-number">6</span>]
+})
+<span class="c-func">print</span>(<span class="c-var">df</span>)
+<span class="c-directive">```</span>
+
+<span class="c-directive">```{math}</span>
+<span class="c-math">\begin{aligned}</span>
+    <span class="c-math">E &= mc^2 \\</span>
+    <span class="c-math">F &= ma</span>
+<span class="c-math">\end{aligned}</span>
+<span class="c-directive">```</span></code></pre>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Features -->
+  <section class="section" id="features">
+    <div class="container">
+      <h2 class="section-title">Features</h2>
+      <p class="section-subtitle">Everything you need for MyST Markdown editing in Neovim</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>Auto Detection</h3>
+          <p>Automatically detects MyST files based on content patterns like <code>{code-cell}</code> and <code>{math}</code> directives.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3>Code-Cell Highlighting</h3>
+          <p>Language-specific syntax highlighting inside <code>{code-cell}</code> directives — Python, JavaScript, Bash, and more.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📐</div>
+          <h3>Math Directives</h3>
+          <p>Full LaTeX syntax highlighting for <code>{math}</code> directives and <code>$$</code> blocks.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌳</div>
+          <h3>Tree-sitter Powered</h3>
+          <p>Built on tree-sitter for robust, accurate parsing. Uses injection queries for language-specific highlighting.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Fast & Lightweight</h3>
+          <p>Detection caching, configurable scan limits, and zero-cost debug logging when disabled.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧪</div>
+          <h3>170+ Tests</h3>
+          <p>Comprehensive test suite covering directives, edge cases, performance, and tree-sitter integration.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Installation -->
+  <section class="section section-alt" id="installation">
+    <div class="container">
+      <h2 class="section-title">Installation</h2>
+      <p class="section-subtitle">Get up and running in minutes</p>
+
+      <div class="install-tabs">
+        <button class="tab-btn active" data-tab="lazy">lazy.nvim</button>
+        <button class="tab-btn" data-tab="packer">packer.nvim</button>
+      </div>
+
+      <div class="tab-content active" id="tab-lazy">
+        <div class="code-window">
+          <div class="code-window-bar">
+            <span class="code-dot red"></span>
+            <span class="code-dot yellow"></span>
+            <span class="code-dot green"></span>
+            <span class="code-window-title">plugins/myst.lua</span>
+          </div>
+          <pre class="code-block"><code>{
+  <span class="c-string">"QuantEcon/myst-markdown-tree-sitter.nvim"</span>,
+  <span class="c-var">version</span> = <span class="c-string">"0.5.1"</span>,
+  <span class="c-var">dependencies</span> = { <span class="c-string">"nvim-treesitter/nvim-treesitter"</span> },
+  <span class="c-var">ft</span> = { <span class="c-string">"markdown"</span>, <span class="c-string">"myst"</span> },
+  <span class="c-var">config</span> = <span class="c-keyword">function</span>()
+    <span class="c-func">require</span>(<span class="c-string">'myst-markdown'</span>).<span class="c-func">setup</span>()
+  <span class="c-keyword">end</span>,
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-packer">
+        <div class="code-window">
+          <div class="code-window-bar">
+            <span class="code-dot red"></span>
+            <span class="code-dot yellow"></span>
+            <span class="code-dot green"></span>
+            <span class="code-window-title">plugins.lua</span>
+          </div>
+          <pre class="code-block"><code><span class="c-func">use</span> {
+  <span class="c-string">'QuantEcon/myst-markdown-tree-sitter.nvim'</span>,
+  <span class="c-var">requires</span> = {<span class="c-string">'nvim-treesitter/nvim-treesitter'</span>},
+  <span class="c-var">config</span> = <span class="c-keyword">function</span>()
+    <span class="c-func">require</span>(<span class="c-string">'myst-markdown'</span>).<span class="c-func">setup</span>()
+  <span class="c-keyword">end</span>
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="install-requirements">
+        <h3>Requirements</h3>
+        <ul>
+          <li><strong>Neovim</strong> &ge; 0.8.0</li>
+          <li><a href="https://github.com/nvim-treesitter/nvim-treesitter" target="_blank" rel="noopener">nvim-treesitter</a></li>
+          <li>Tree-sitter parsers: <code>:TSInstall markdown markdown_inline</code></li>
+          <li>Recommended: <code>:TSInstall python latex</code></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Configuration -->
+  <section class="section" id="configuration">
+    <div class="container">
+      <h2 class="section-title">Configuration</h2>
+      <p class="section-subtitle">Works out of the box — customize when you need to</p>
+
+      <div class="config-grid">
+        <div class="config-block">
+          <h3>Minimal (recommended)</h3>
+          <div class="code-window">
+            <div class="code-window-bar">
+              <span class="code-dot red"></span>
+              <span class="code-dot yellow"></span>
+              <span class="code-dot green"></span>
+            </div>
+            <pre class="code-block"><code><span class="c-func">require</span>(<span class="c-string">'myst-markdown'</span>).<span class="c-func">setup</span>()</code></pre>
+          </div>
+        </div>
+        <div class="config-block">
+          <h3>Full options</h3>
+          <div class="code-window">
+            <div class="code-window-bar">
+              <span class="code-dot red"></span>
+              <span class="code-dot yellow"></span>
+              <span class="code-dot green"></span>
+            </div>
+            <pre class="code-block"><code><span class="c-func">require</span>(<span class="c-string">'myst-markdown'</span>).<span class="c-func">setup</span>({
+  <span class="c-var">debug</span> = <span class="c-keyword">false</span>,
+  <span class="c-var">detection</span> = {
+    <span class="c-var">scan_lines</span> = <span class="c-number">50</span>,
+  },
+  <span class="c-var">performance</span> = {
+    <span class="c-var">cache_enabled</span> = <span class="c-keyword">true</span>,
+  },
+  <span class="c-var">highlighting</span> = {
+    <span class="c-var">enabled</span> = <span class="c-keyword">true</span>,
+  },
+})</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="config-table-wrap">
+        <table class="config-table">
+          <thead>
+            <tr>
+              <th>Option</th>
+              <th>Default</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>debug</code></td>
+              <td><code>false</code></td>
+              <td>Enable verbose debug logging</td>
+            </tr>
+            <tr>
+              <td><code>detection.scan_lines</code></td>
+              <td><code>50</code></td>
+              <td>Lines to scan for MyST patterns</td>
+            </tr>
+            <tr>
+              <td><code>performance.cache_enabled</code></td>
+              <td><code>true</code></td>
+              <td>Cache filetype detection results</td>
+            </tr>
+            <tr>
+              <td><code>highlighting.enabled</code></td>
+              <td><code>true</code></td>
+              <td>Enable tree-sitter highlighting</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Supported Languages -->
+  <section class="section section-alt" id="languages">
+    <div class="container">
+      <h2 class="section-title">Supported Languages</h2>
+      <p class="section-subtitle">Language injection for <code>{code-cell}</code> directives</p>
+
+      <div class="lang-grid">
+        <div class="lang-card lang-featured">
+          <div class="lang-name">Python</div>
+          <div class="lang-aliases">python, python3, ipython, ipython3</div>
+          <div class="lang-badge">Built-in</div>
+        </div>
+        <div class="lang-card lang-featured">
+          <div class="lang-name">LaTeX</div>
+          <div class="lang-aliases">{math} directives</div>
+          <div class="lang-badge">Recommended</div>
+        </div>
+        <div class="lang-card">
+          <div class="lang-name">JavaScript</div>
+          <div class="lang-aliases">javascript, js</div>
+        </div>
+        <div class="lang-card">
+          <div class="lang-name">TypeScript</div>
+          <div class="lang-aliases">typescript, ts</div>
+        </div>
+        <div class="lang-card">
+          <div class="lang-name">Bash</div>
+          <div class="lang-aliases">bash, sh</div>
+        </div>
+        <div class="lang-card">
+          <div class="lang-name">R</div>
+          <div class="lang-aliases">r</div>
+        </div>
+        <div class="lang-card">
+          <div class="lang-name">Julia</div>
+          <div class="lang-aliases">julia</div>
+        </div>
+        <div class="lang-card">
+          <div class="lang-name">Rust</div>
+          <div class="lang-aliases">rust</div>
+        </div>
+        <div class="lang-card">
+          <div class="lang-name">Go</div>
+          <div class="lang-aliases">go</div>
+        </div>
+        <div class="lang-card">
+          <div class="lang-name">C / C++</div>
+          <div class="lang-aliases">c, cpp</div>
+        </div>
+      </div>
+
+      <p class="lang-install-hint">Install parsers with <code>:TSInstall &lt;language&gt;</code></p>
+    </div>
+  </section>
+
+  <!-- Commands -->
+  <section class="section" id="commands">
+    <div class="container">
+      <h2 class="section-title">Commands</h2>
+      <p class="section-subtitle">Built-in commands for debugging and diagnostics</p>
+
+      <div class="commands-grid">
+        <div class="command-card">
+          <div class="command-name"><code>:MystStatus</code></div>
+          <p>Quick health check of MyST highlighting status for the current buffer.</p>
+        </div>
+        <div class="command-card">
+          <div class="command-name"><code>:MystDebug</code></div>
+          <p>Comprehensive debugging info — tree-sitter state, queries, injections, diagnostics.</p>
+        </div>
+        <div class="command-card">
+          <div class="command-name"><code>:MystInfo</code></div>
+          <p>Show plugin version, configuration, and environment details.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Troubleshooting -->
+  <section class="section section-alt" id="troubleshooting">
+    <div class="container">
+      <h2 class="section-title">Troubleshooting</h2>
+      <p class="section-subtitle">Quick fixes for common issues</p>
+
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Highlighting not working at all</summary>
+          <div class="faq-answer">
+            <ol>
+              <li>Run <code>:MystStatus</code> for a quick health check</li>
+              <li>Ensure the file contains MyST directives like <code>{code-cell}</code> or <code>{math}</code></li>
+              <li>Verify nvim-treesitter is installed and the markdown parser is available</li>
+              <li>Run <code>:MystDebug</code> for detailed diagnostics</li>
+            </ol>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>Code-cell highlighting not working for a specific language</summary>
+          <div class="faq-answer">
+            <p>The tree-sitter parser for that language may not be installed.</p>
+            <pre class="code-inline">:TSInstall python    <span class="c-comment">-- or javascript, bash, etc.</span></pre>
+            <p>Verify with <code>:TSInstallInfo</code> to see installed parsers.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>Conflicts with other MyST plugins</summary>
+          <div class="faq-answer">
+            <p>If you have another MyST plugin installed (e.g., <code>myst-markdown.nvim</code> without <code>tree-sitter</code> in the name), remove it — it can conflict with filetype detection and query injection.</p>
+            <p>Check via <code>:scriptnames</code> or <code>:echo &amp;runtimepath</code>.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>Math directive highlighting not working</summary>
+          <div class="faq-answer">
+            <p>Install the LaTeX tree-sitter parser:</p>
+            <pre class="code-inline">:TSInstall latex</pre>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>Colon-fence directives not highlighted</summary>
+          <div class="faq-answer">
+            <p>MyST supports both backtick fences (<code>```</code>) and colon fences (<code>:::</code>), but this plugin only supports backtick fences because the underlying markdown tree-sitter parser doesn't recognize colon fences.</p>
+            <p>See <a href="https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/issues/51" target="_blank" rel="noopener">issue #51</a> for tracking a dedicated MyST parser.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-about">
+          <div class="footer-logo">🌿 myst-markdown-tree-sitter.nvim</div>
+          <p>Tree-sitter syntax highlighting for MyST Markdown in Neovim.</p>
+          <p class="footer-org">Built by <a href="https://quantecon.org" target="_blank" rel="noopener">QuantEcon</a></p>
+        </div>
+        <div class="footer-links-section">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim" target="_blank" rel="noopener">GitHub</a></li>
+            <li><a href="https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a></li>
+            <li><a href="https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Contributing</a></li>
+            <li><a href="https://github.com/QuantEcon/myst-markdown-tree-sitter.nvim/issues" target="_blank" rel="noopener">Issues</a></li>
+          </ul>
+        </div>
+        <div class="footer-links-section">
+          <h4>Ecosystem</h4>
+          <ul>
+            <li><a href="https://mystmd.org/" target="_blank" rel="noopener">MyST Markdown</a></li>
+            <li><a href="https://neovim.io/" target="_blank" rel="noopener">Neovim</a></li>
+            <li><a href="https://github.com/nvim-treesitter/nvim-treesitter" target="_blank" rel="noopener">nvim-treesitter</a></li>
+            <li><a href="https://quantecon.org" target="_blank" rel="noopener">QuantEcon</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>MIT License &copy; 2026 QuantEcon</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
