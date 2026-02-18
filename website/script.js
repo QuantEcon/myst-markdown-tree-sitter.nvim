@@ -43,6 +43,23 @@
     });
   });
 
+  // --- Hero theme switcher ---
+  const themeTabs = document.querySelectorAll('.theme-tab');
+  const heroCodeWindow = document.querySelector('.hero-code .code-window');
+
+  themeTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const themeId = tab.getAttribute('data-theme-id');
+
+      themeTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      if (heroCodeWindow) {
+        heroCodeWindow.setAttribute('data-theme', themeId);
+      }
+    });
+  });
+
   // --- Scroll reveal ---
   const revealElements = () => {
     // Apply reveal class to section elements

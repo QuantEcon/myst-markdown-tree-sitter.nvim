@@ -348,10 +348,11 @@ ul {
    Code Window
    =========================== */
 .code-window {
-  background: var(--bg-code);
+  background: var(--cw-bg, var(--bg-code));
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
   overflow: hidden;
+  transition: background 0.3s ease;
 }
 
 .code-window-bar {
@@ -359,8 +360,10 @@ ul {
   align-items: center;
   gap: 6px;
   padding: 10px 14px;
-  background: var(--bg-elevated);
+  background: var(--cw-bar, var(--bg-elevated));
   border-bottom: 1px solid var(--border-default);
+  flex-wrap: wrap;
+  transition: background 0.3s ease;
 }
 
 .code-dot {
@@ -380,14 +383,48 @@ ul {
   font-family: var(--font-sans);
 }
 
+/* --- Theme Tabs --- */
+.theme-tabs {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.theme-tab {
+  padding: 3px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.theme-tab:hover {
+  color: var(--text-secondary);
+}
+
+.theme-tab.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
 .code-block {
   padding: var(--space-lg);
   overflow-x: auto;
   font-family: var(--font-mono);
   font-size: 0.85rem;
   line-height: 1.65;
-  color: var(--text-primary);
+  color: var(--cw-fg, var(--text-primary));
   tab-size: 4;
+  transition: color 0.3s ease;
 }
 
 .code-block code {
@@ -397,26 +434,102 @@ ul {
   color: inherit;
 }
 
-/* Syntax highlighting classes */
-.c-keyword { color: var(--syn-keyword); }
-.c-string { color: var(--syn-string); }
-.c-func { color: var(--syn-func); }
-.c-number { color: var(--syn-number); }
-.c-comment { color: var(--syn-comment); }
-.c-var { color: var(--syn-var); }
-.c-module { color: var(--syn-module); }
-.c-op { color: var(--syn-op); }
-.c-directive { color: var(--syn-directive); font-weight: 600; }
-.c-lang { color: var(--syn-lang); font-weight: 600; }
-.c-math { color: var(--syn-math); }
+/* Syntax highlighting — uses code-window scoped vars with fallback */
+.c-keyword { color: var(--cw-keyword, var(--syn-keyword)); transition: color 0.3s ease; }
+.c-string { color: var(--cw-string, var(--syn-string)); transition: color 0.3s ease; }
+.c-func { color: var(--cw-func, var(--syn-func)); transition: color 0.3s ease; }
+.c-number { color: var(--cw-number, var(--syn-number)); transition: color 0.3s ease; }
+.c-comment { color: var(--cw-comment, var(--syn-comment)); transition: color 0.3s ease; }
+.c-var { color: var(--cw-var, var(--syn-var)); transition: color 0.3s ease; }
+.c-module { color: var(--cw-module, var(--syn-module)); transition: color 0.3s ease; }
+.c-op { color: var(--cw-op, var(--syn-op)); transition: color 0.3s ease; }
+.c-directive { color: var(--cw-directive, var(--syn-directive)); font-weight: 600; transition: color 0.3s ease; }
+.c-lang { color: var(--cw-lang, var(--syn-lang)); font-weight: 600; transition: color 0.3s ease; }
+.c-math { color: var(--cw-math, var(--syn-math)); transition: color 0.3s ease; }
 
-/* LaTeX syntax */
-.c-tex-cmd { color: #d2a8ff; }        /* \begin, \end — purple, like functions */
-.c-tex-brace { color: #8b949e; }      /* { } — muted gray */
-.c-tex-env { color: #7ee787; }        /* aligned — green, like identifiers */
-.c-tex-var { color: #e6edf3; }        /* E, F, mc, ma — primary text */
-.c-tex-op { color: #ff7b72; }         /* &=, \\, ^  — red, like operators */
-.c-tex-sup { color: #79c0ff; }        /* ^2 — blue, like numbers */
+/* LaTeX syntax — also theme-aware */
+.c-tex-cmd { color: var(--cw-func, #d2a8ff); transition: color 0.3s ease; }
+.c-tex-brace { color: var(--cw-comment, #8b949e); transition: color 0.3s ease; }
+.c-tex-env { color: var(--cw-module, #7ee787); transition: color 0.3s ease; }
+.c-tex-var { color: var(--cw-fg, #e6edf3); transition: color 0.3s ease; }
+.c-tex-op { color: var(--cw-op, #ff7b72); transition: color 0.3s ease; }
+.c-tex-sup { color: var(--cw-number, #79c0ff); transition: color 0.3s ease; }
+
+/* ===========================
+   Theme Palettes
+   =========================== */
+
+/* GitHub Dark (default) */
+.code-window[data-theme="github-dark"] {
+  --cw-bg: #0d1117;
+  --cw-bar: #161b22;
+  --cw-fg: #e6edf3;
+  --cw-keyword: #ff7b72;
+  --cw-string: #a5d6ff;
+  --cw-func: #d2a8ff;
+  --cw-number: #79c0ff;
+  --cw-comment: #8b949e;
+  --cw-var: #ffa657;
+  --cw-module: #7ee787;
+  --cw-op: #ff7b72;
+  --cw-directive: #bc8cff;
+  --cw-lang: #7ee787;
+  --cw-math: #a5d6ff;
+}
+
+/* Catppuccin Mocha */
+.code-window[data-theme="catppuccin"] {
+  --cw-bg: #1e1e2e;
+  --cw-bar: #181825;
+  --cw-fg: #cdd6f4;
+  --cw-keyword: #cba6f7;
+  --cw-string: #a6e3a1;
+  --cw-func: #89b4fa;
+  --cw-number: #fab387;
+  --cw-comment: #6c7086;
+  --cw-var: #f38ba8;
+  --cw-module: #f9e2af;
+  --cw-op: #89dceb;
+  --cw-directive: #cba6f7;
+  --cw-lang: #a6e3a1;
+  --cw-math: #89b4fa;
+}
+
+/* Tokyo Night */
+.code-window[data-theme="tokyonight"] {
+  --cw-bg: #1a1b26;
+  --cw-bar: #16161e;
+  --cw-fg: #c0caf5;
+  --cw-keyword: #bb9af7;
+  --cw-string: #9ece6a;
+  --cw-func: #7aa2f7;
+  --cw-number: #ff9e64;
+  --cw-comment: #565f89;
+  --cw-var: #c0caf5;
+  --cw-module: #2ac3de;
+  --cw-op: #89ddff;
+  --cw-directive: #bb9af7;
+  --cw-lang: #9ece6a;
+  --cw-math: #7aa2f7;
+}
+
+/* One Dark */
+.code-window[data-theme="onedark"] {
+  --cw-bg: #282c34;
+  --cw-bar: #21252b;
+  --cw-fg: #abb2bf;
+  --cw-keyword: #c678dd;
+  --cw-string: #98c379;
+  --cw-func: #61afef;
+  --cw-number: #d19a66;
+  --cw-comment: #5c6370;
+  --cw-var: #e06c75;
+  --cw-module: #e5c07b;
+  --cw-op: #56b6c2;
+  --cw-directive: #c678dd;
+  --cw-lang: #98c379;
+  --cw-math: #61afef;
+}
 
 /* Inline code blocks (for troubleshooting) */
 .code-inline {
@@ -943,6 +1056,21 @@ ul {
 
   .hero-code {
     margin: 0 calc(-1 * var(--space-md));
+  }
+
+  .theme-tabs {
+    margin-left: 0;
+    margin-top: 6px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .code-window-bar {
+    justify-content: flex-start;
+  }
+
+  .code-window-title {
+    flex: 1;
   }
 
   .lang-grid {
