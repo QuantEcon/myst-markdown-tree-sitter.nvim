@@ -178,32 +178,34 @@ refactor: split highlighting logic into separate module
 ### GitHub CLI (`gh`) Usage
 **Important:** The `gh` CLI provides interactive results which can hang the terminal.
 
-**Always redirect output to `/tmp` when using `gh` commands:**
+**Always pipe output through `cat` or `head` when using `gh` commands:**
 
 ```bash
-# ✅ Good - Write to file first
-gh pr view 123 > /tmp/pr_details.txt
-cat /tmp/pr_details.txt
-
-gh issue list --limit 10 > /tmp/issues.txt
-cat /tmp/issues.txt
-
-# ❌ Bad - Will hang
-gh pr view 123
-gh issue list
+# ✅ Good - Pipe to avoid interactive pager
+gh pr view 123 2>&1 | cat
+gh issue list --limit 10 2>&1 | cat
 ```
 
-**When creating GitHub releases:**
+**When creating PRs or releases that need multi-line descriptions:**
+
+Use the `create_file` tool to write the body/notes to a file first, then reference it with `--body-file` or `--notes-file`. **Never** use heredocs, shell escaping, or inline multi-line strings in terminal commands — they are unreliable and error-prone.
 
 ```bash
-# ✅ Good - Simple version number only
+# ✅ Good - Use create_file tool to write /tmp/pr_body.md, then:
+gh pr create --title "feat: description" --body-file /tmp/pr_body.md --base main
+
+# ✅ Good - Use create_file tool to write /tmp/release_notes.md, then:
 gh release create v0.2.1 --title "v0.2.1" --notes-file /tmp/release_notes.md
 
-# ❌ Bad - Don't duplicate description in title
+# ❌ Bad - Heredocs and shell escaping break in terminal
+gh pr create --title "feat: thing" --body "## Summary
+Multi-line content here"
+
+# ❌ Bad - Don't duplicate description in release title
 gh release create v0.2.1 --title "v0.2.1 - Bug Fix: Description" --notes-file /tmp/release_notes.md
 ```
 
-**Rationale:** The title/description is already in the release notes file. Keep the GitHub release title clean with just the version number.
+**Rationale:** The `create_file` tool reliably writes exact content without escaping issues. Heredocs and multi-line shell strings frequently get mangled by the terminal. The title/description is already in the notes file — keep GitHub release titles clean with just the version number.
 
 ### Pull Request Guidelines
 - Write clear PR descriptions (what, why, how)
@@ -233,6 +235,12 @@ gh release create v0.2.1 --title "v0.2.1 - Bug Fix: Description" --notes-file /t
 3. Add validation logic
 4. Write test case
 5. Update CHANGELOG.md
+
+### Releasing a New Version
+1. Update version in `lua/myst-markdown/version.lua` (single source of truth)
+2. Update `website/index.html` — version appears in the hero badge and installation example
+3. Move `[Unreleased]` entries in CHANGELOG.md to the new version heading
+4. Tag and create GitHub release
 
 ### Fixing Bugs
 1. Create test that reproduces the bug
