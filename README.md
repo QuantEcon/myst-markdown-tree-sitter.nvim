@@ -29,7 +29,6 @@ This plugin provides syntax highlighting and filetype detection for [MyST (Marke
   config = function()
     require('myst-markdown').setup()
   end,
-  priority = 1000, -- Load after other markdown plugins
 }
 ```
 
@@ -54,14 +53,12 @@ This plugin provides syntax highlighting and filetype detection for [MyST (Marke
       },
     })
   end,
-  priority = 1000,
 }
 ```
 
 **Configuration Options Explained:**
 - `version = "0.5.1"` - Pin to a specific release for stability, or use `version = "*"` for latest
-- `ft = {"markdown", "myst"}` - Lazy loads the plugin only when opening markdown or MyST files, improving startup performance
-- `priority = 1000` - Ensures this plugin loads after other markdown plugins to prevent highlighting conflicts
+- `ft = {"markdown", "myst"}` - Lazy loads the plugin only when opening markdown or MyST files
 - `config` function - Runs the setup after treesitter is properly loaded
 
 ### Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
@@ -93,7 +90,6 @@ To test unreleased changes from a specific branch (useful for testing fixes befo
     -- Ensure this runs after treesitter is loaded
     require('myst-markdown').setup()
   end,
-  priority = 1000, -- Load after other markdown plugins
 }
 ```
 
@@ -238,6 +234,9 @@ If MyST highlighting is not working:
 - Check if the language parser is installed: `:TSInstall <language>`
 - Example: For Python highlighting, run `:TSInstall python`
 - Verify parser is loaded: `:lua print(vim.inspect(require('nvim-treesitter.parsers').get_parser()))`
+
+**Conflicts with other MyST plugins?**
+- If you previously used a standalone `myst-markdown` plugin (not this one), remove it — it can conflict with `myst-markdown-tree-sitter.nvim`'s filetype detection and query injection
 
 **Math directive highlighting not working?**
 - Install the LaTeX parser: `:TSInstall latex`

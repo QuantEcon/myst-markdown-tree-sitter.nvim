@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Removed `priority = 1000` from all lazy.nvim examples** — this setting is a no-op for
+  `ft`-based loading and was misleading; removed from README, examples, and help docs.
+- **Improved troubleshooting docs** — added guidance for conflicts with standalone `myst-markdown`
+  plugins and lazy loading issues.
+
 ## [0.5.1] - 2026-02-17
 
 ### Fixed
