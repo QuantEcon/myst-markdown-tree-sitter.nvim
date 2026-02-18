@@ -236,6 +236,12 @@ gh release create v0.2.1 --title "v0.2.1 - Bug Fix: Description" --notes-file /t
 4. Write test case
 5. Update CHANGELOG.md
 
+### Releasing a New Version
+1. Update version in `lua/myst-markdown/version.lua` (single source of truth)
+2. Update `website/index.html` — version appears in the hero badge and installation example
+3. Move `[Unreleased]` entries in CHANGELOG.md to the new version heading
+4. Tag and create GitHub release
+
 ### Fixing Bugs
 1. Create test that reproduces the bug
 2. Fix the code

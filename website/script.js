@@ -122,10 +122,16 @@
   handleScroll();
   updateNavBg();
 
+  let isScrolling = false;
   window.addEventListener('scroll', () => {
-    handleScroll();
-    updateActiveNav();
-    updateNavBg();
+    if (isScrolling) return;
+    isScrolling = true;
+    requestAnimationFrame(() => {
+      handleScroll();
+      updateActiveNav();
+      updateNavBg();
+      isScrolling = false;
+    });
   }, { passive: true });
 
   // --- Smooth scroll for anchor links (fallback for older browsers) ---
