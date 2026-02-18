@@ -200,6 +200,19 @@ function M.setup_filetype_autocmd()
   if has_open_buffers then
     vim.schedule(function()
       M.invalidate_query_cache()
+      -- Re-detect filetypes for markdown buffers that may contain MyST content.
+      -- When the plugin loads late (e.g. lazy.nvim ft trigger), the secondary
+      -- markdown->myst detection autocmd wasn't registered yet for the initial
+      -- FileType event, so we re-run it here.
+      local filetype_mod = require("myst-markdown.filetype")
+      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].filetype == "markdown" then
+          if filetype_mod.detect_myst(buf) then
+            vim.bo[buf].filetype = "myst" -- luacheck: ignore 122
+            utils.debug("Late-detected myst filetype for buffer " .. buf)
+          end
+        end
+      end
       M.refresh_active_buffers()
     end)
   end
