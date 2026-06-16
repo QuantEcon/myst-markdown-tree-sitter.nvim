@@ -1,6 +1,16 @@
+;; extends
+;;
 ;; MyST Markdown Language Injection Queries (Enhanced)
 ;; These queries extend standard markdown with MyST code-cell support
 ;; Support code-cells with optional YAML configuration blocks
+;;
+;; The `;; extends` modeline above is required: it tells Neovim to MERGE these
+;; rules with other markdown/injections.scm files on the runtimepath instead of
+;; participating in override-by-priority. Without it, any higher-priority
+;; markdown injections query -- notably nvim-treesitter's `main` branch, which
+;; installs queries into stdpath('data')/site -- fully replaces this file, and
+;; code-cell language injection is silently lost. (highlights.scm already has
+;; this modeline.)
 
 ;; MyST code-cell injection patterns (processed first)
 ;; Inject Python parser into code-cell python blocks
