@@ -1,4 +1,4 @@
-; extends
+;; extends
 
 ;; MyST {math} directive: apply math styling to content
 ;; This gives {math} blocks the same base @markup.math highlight that
