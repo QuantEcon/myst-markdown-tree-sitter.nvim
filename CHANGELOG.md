@@ -13,6 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Improved troubleshooting docs** — added guidance for conflicts with standalone `myst-markdown`
   plugins and lazy loading issues.
 
+### Fixed
+- **Code-cell language injection no longer lost when nvim-treesitter `main` is installed** —
+  `queries/markdown/injections.scm` now starts with a `;; extends` modeline so its rules merge
+  with other `markdown/injections.scm` files on the runtimepath instead of participating in
+  override-by-priority. Without it, a higher-priority injections query — notably nvim-treesitter's
+  `main` branch, which installs queries into `stdpath('data')/site` — fully replaced this file,
+  silently dropping the `{code-cell}` and `{math}` injection rules so Python (and other languages)
+  stopped highlighting inside code-cell blocks. (`highlights.scm` already had this modeline.)
+
 ## [0.5.1] - 2026-02-17
 
 ### Fixed
