@@ -36,7 +36,7 @@ This plugin provides syntax highlighting and filetype detection for [MyST (Marke
 ```lua
 {
   "QuantEcon/myst-markdown-tree-sitter.nvim",
-  version = "0.5.1",  -- Pin to specific version for stability
+  version = "0.5.2",  -- Pin to specific version for stability
   dependencies = { "nvim-treesitter/nvim-treesitter" },
   ft = { "markdown", "myst" },
   config = function()
@@ -57,7 +57,7 @@ This plugin provides syntax highlighting and filetype detection for [MyST (Marke
 ```
 
 **Configuration Options Explained:**
-- `version = "0.5.1"` - Pin to a specific release for stability, or use `version = "*"` for latest
+- `version = "0.5.2"` - Pin to a specific release for stability, or use `version = "*"` for latest
 - `ft = {"markdown", "myst"}` - Lazy loads the plugin only when opening markdown or MyST files
 - `config` function - Called when the plugin is loaded; assumes Tree-sitter is available via `dependencies`
 
