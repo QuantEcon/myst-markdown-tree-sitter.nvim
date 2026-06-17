@@ -20,7 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   override-by-priority. Without it, a higher-priority injections query — notably nvim-treesitter's
   `main` branch, which installs queries into `stdpath('data')/site` — fully replaced this file,
   silently dropping the `{code-cell}` and `{math}` injection rules so Python (and other languages)
-  stopped highlighting inside code-cell blocks. (`highlights.scm` already had this modeline.)
+  stopped highlighting inside code-cell blocks. (`highlights.scm` already carried this modeline;
+  both query files now use the same `;; extends` form for consistency.)
 
 ## [0.5.1] - 2026-02-17
 
